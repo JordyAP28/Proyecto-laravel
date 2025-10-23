@@ -11,8 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('factura', function (Blueprint $table) {
-            $table->id();
+        Schema::create('facturas', function (Blueprint $table) {
+            $table->id('id_factura');
+            $table->foreingId('id_deportista')->constrained('deportistas','id_deportista');
+            $table->date('fecha_emision');
+            $table->decimal('total',10,2);
+            $table->enum('estado', ['Pagado', 'Pendiente', 'Cancelado', ]);
             $table->timestamps();
         });
     }
@@ -22,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('factura');
+        Schema::dropIfExists('facturas');
     }
 };

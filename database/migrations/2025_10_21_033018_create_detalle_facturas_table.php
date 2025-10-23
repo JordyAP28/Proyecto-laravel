@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('detalle_factura', function (Blueprint $table) {
             $table->id();
+            $table->foreingId('id_factura')->constrained('faturas','id_facturas');
+            $table->text('concepto');
+            $table->decimal('monto',10,2);
             $table->timestamps();
         });
     }

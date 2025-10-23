@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('escenarios', function (Blueprint $table) {
             $table->id('id_escenario');
+            $table->interger('capacidad');
+            $table->string('nombre');
+            $table->string('tipo');
             $table->timestamps();
         });
     }
