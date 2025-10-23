@@ -13,15 +13,14 @@ return new class extends Migration
     {
         Schema::create('deportistas', function (Blueprint $table) {
             $table->id('id_deportista');
-            $tabel->date('fecha_nacimiento');
-            $table->date('fecha_registro');
-            $table->integer('cedula');
+            $table->date('fecha_nacimiento');
+            $table->timestamp('fecha_registro')->useCurrent();
+            $table->string('cedula')->unique();
             $table->string('nombre');
             $table->string('apellido');
+            $table->string('correo')->unique();
             $table->string('direccion');
-            $table->integer('telefono');
-            $table->string('direccion');
-            $table->timestamps();
+            $table->string('telefono');
         });
     }
 

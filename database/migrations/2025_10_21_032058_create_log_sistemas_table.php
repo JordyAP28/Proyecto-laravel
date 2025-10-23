@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('log_sistemas', function (Blueprint $table) {
-            $table->id();
+            $table->id('id_log');
             $table->foreingId('id_usuario')->constrained('usuarios','id_usuario');
-            $table->text('accion');
+            $table->text('accion')->nullable();
             $table->timestamps();
         });
     }

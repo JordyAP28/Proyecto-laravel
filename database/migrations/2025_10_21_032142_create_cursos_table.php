@@ -15,12 +15,10 @@ return new class extends Migration
             $table->id('id_curso');
             $table->foreingId('id_estado')->constrained('estados','id_estado');
             $table->string('nombre_curso');
-            $table->enum('tipo',['Vacacional','Permanete','Temporal']);
+            $table->enum('tipo',['Vacacional','Permanente','Temporal']);
             $table->text('descripcion');
             $table->date('fecha_inicio');
-            $table->date('facha_fin');
-
-            $table->timestamps();
+            $table->date('fecha_fin');
         });
     }
 

@@ -13,9 +13,7 @@ return new class extends Migration
     {
         Schema::create('estados', function (Blueprint $table) { 
             $table->id('id_estado'); 
-            $table->enum('estado', ['Activo', 'Suspendido', 'Anulado', 'Observacion']); 
-            
-            $table->timestamps();
+            $table->enum('estado', ['Activo', 'Suspendido', 'Anulado', 'Observacion']);
         });
     }
     /**

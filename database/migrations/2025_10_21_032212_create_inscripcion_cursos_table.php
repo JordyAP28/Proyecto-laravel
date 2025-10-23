@@ -12,11 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('inscripcion_cursos', function (Blueprint $table) {
-            $table->id();
+            $table->id('id_inscripcion');
             $table->foreingId('id_curso')->constrained('cursos','id_curso');
             $table->foreingId('id_deportista')->constrained('deportistas','id_deportista');
-            $table->date('fecha_inscripcion');
-            $table->timestamps();
+            $table->timestamp('fecha_inscripcion')->useCurrent();
         });
     }
 

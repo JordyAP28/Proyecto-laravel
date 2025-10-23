@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ecenario', function (Blueprint $table) {
-            $table->id();
+        Schema::create('escenarios', function (Blueprint $table) {
+            $table->id('id_escenario');
             $table->timestamps();
         });
     }

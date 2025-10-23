@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('programa_actividades', function (Blueprint $table) {
             $table->id('id_programa_actividad');
-            $table->foreingId('id_estado')->constrained('estados','id_estado');
-            $table->timestamps();
+            $table->foreingId('id_escenario')->constrained('escenarios','id_escenario');
+            $table->foreingId('id_actividad')->constrained('actividad','id_actividad');
         });
     }
 

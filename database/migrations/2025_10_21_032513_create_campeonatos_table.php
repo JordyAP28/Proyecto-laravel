@@ -12,12 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('campeonatos', function (Blueprint $table) {
-            $table->id('id_capeonato');
+            $table->id('id_campeonato');
             $table->date('fecha_inicio');
-            $tabe->date('fecha_fin');
+            $table->date('fecha_fin');
             $table->string('nombre');
-            $table->text('categoria');
-            $table->timestamps();
+            $table->string('categoria');
         });
     }
 

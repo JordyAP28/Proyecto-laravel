@@ -17,8 +17,7 @@ return new class extends Migration
             $table->foreingId('id_estado')->constrained('estados','id_estado');
             $table->string('nombre');
             $table->string('representante');
-            $table->integer('telefono');
-            $table->timestamps();
+            $table->string('telefono');
         });
     }
 
