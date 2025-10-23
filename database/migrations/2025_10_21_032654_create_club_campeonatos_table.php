@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('club_campeonato', function (Blueprint $table) {
+        Schema::create('club_campeonatos', function (Blueprint $table) {
             $table->id();
+            $table->foreingId('id_club')->constrained('clubes','id_club');
+            $table->foreingId('id_campeonato')->constrained('campeonatos','id_campeonato');
             $table->timestamps();
         });
     }
@@ -22,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('club_campeonato');
+        Schema::dropIfExists('club_campeonatos');
     }
 };

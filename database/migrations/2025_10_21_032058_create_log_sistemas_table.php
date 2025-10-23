@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('log_sistema', function (Blueprint $table) {
+        Schema::create('log_sistemas', function (Blueprint $table) {
             $table->id();
+            $table->foreingId('id_usuario')->constrained('usuarios','id_usuario');
+            $table->text('accion');
             $table->timestamps();
         });
     }
@@ -22,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('log_sistema');
+        Schema::dropIfExists('log_sistemas');
     }
 };

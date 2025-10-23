@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('rol', function (Blueprint $table) {
+        Schema::create('inscripcion_cursos', function (Blueprint $table) {
             $table->id();
+            $table->foreingId('id_curso')->constrained('cursos','id_curso');
+            $table->foreingId('id_deportista')->constrained('deportistas','id_deportista');
+            $table->date('fecha_inscripcion');
             $table->timestamps();
         });
     }
@@ -22,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('rol');
+        Schema::dropIfExists('inscripcion_cursos');
     }
 };
