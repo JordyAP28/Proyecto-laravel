@@ -1,0 +1,137 @@
+/* === Contenedor general === */
+.recuperar-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* ocupa toda la pantalla */
+  background: none; /* usa el fondo que ya tenga tu app */
+  font-family: 'Poppins', sans-serif;
+}
+
+/* === Tarjeta principal === */
+.recuperar-card {
+  background: rgba(255, 255, 255, 0.95); /* blanca casi sólida pero suave */
+  border-radius: 16px;
+  padding: 45px 55px;
+  width: 420px;
+  text-align: center;
+  color: #333;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); /* sombra elegante */
+  backdrop-filter: blur(6px); /* leve efecto vidrio */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.recuperar-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.2);
+}
+
+/* === Título y texto === */
+.recuperar-header h2 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #1a237e; /* azul profesional */
+  margin-bottom: 10px;
+}
+
+.recuperar-header p {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 30px;
+}
+
+/* === Formulario === */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Etiqueta arriba del input */
+form label {
+  text-align: left;
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+  margin-bottom: 3px;
+}
+
+/* Campo de texto */
+form input {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1.5px solid #ccc;
+  outline: none;
+  background: #fafafa;
+  font-size: 15px;
+  transition: all 0.3s ease;
+}
+
+form input:focus {
+  border-color: #1e88e5;
+  box-shadow: 0 0 6px rgba(30, 136, 229, 0.3);
+  background: #fff;
+}
+
+/* Botón principal */
+form button {
+  background: linear-gradient(135deg, #1e88e5, #1976d2);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+form button:hover {
+  background: linear-gradient(135deg, #1976d2, #0d47a1);
+  transform: scale(1.03);
+}
+
+/* Mensaje dinámico */
+.mensaje {
+  margin-top: 20px;
+  font-weight: 500;
+  color: #333;
+  background: #e3f2fd;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  border-left: 4px solid #1e88e5;
+}
+
+/* Enlace “volver” */
+.volver {
+  margin-top: 25px;
+}
+
+.volver a {
+  text-decoration: none;
+  color: #1e88e5;
+  font-weight: 600;
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.volver a:hover {
+  color: #0d47a1;
+}
+
+/* Animación de aparición */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.recuperar-card {
+  animation: fadeIn 0.6s ease-in-out;
+}

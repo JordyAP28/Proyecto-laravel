@@ -1,15 +1,22 @@
-import {BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
-import { Usuario} from './components/Admin/Usuarios';
+import Usuarios from './components/Usuarios';
+import  Login from './components/Login';
+import { RecuperarContraseña } from './components/RecuperarContraseña';
+import { Registro } from './components/Registro';
 
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Navigate to="/Login" replace />} />
+          {/* Muestra Usuarios directamente en la raíz "/" */}
+          <Route path="/" element={<Usuarios />} />
+          <Route path="/Login" element={<Login/>} />
+         <Route path="/RecuperarContraseña" element={<RecuperarContraseña/>} />
+          <Route path="/Registro" element={<Registro/>} />
+          
 
-          <Route path='/Usuarios' element={<Usuario/>} />
         </Routes>
       </BrowserRouter>
     </div>
