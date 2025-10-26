@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('inscripcion_cursos', function (Blueprint $table) {
             $table->id('id_inscripcion');
-            $table->foreingId('id_curso')->constrained('cursos','id_curso');
-            $table->foreingId('id_deportista')->constrained('deportistas','id_deportista');
+            $table->foreignId('id_curso')->constrained('cursos','id_curso');
+            $table->foreignId('id_deportista')->constrained('deportistas','id_deportista');
             $table->timestamp('fecha_inscripcion')->useCurrent();
         });
     }

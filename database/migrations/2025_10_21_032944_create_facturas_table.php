@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('facturas', function (Blueprint $table) {
             $table->id('id_factura');
-            $table->foreingId('id_deportista')->constrained('deportistas','id_deportista');
+            $table->foreignId('id_deportista')->constrained('deportistas','id_deportista');
             $table->date('fecha_emision');
             $table->decimal('total',10,2);
             $table->enum('estado', ['Pagado', 'Pendiente', 'Cancelado', ]);

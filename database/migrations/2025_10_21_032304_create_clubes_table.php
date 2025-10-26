@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('clubes', function (Blueprint $table) {
             $table->id('id_club');
             $table->date('fecha_creacion');
-            $table->foreingId('id_estado')->constrained('estados','id_estado');
+            $table->foreignId('id_estado')->constrained('estados','id_estado');
             $table->string('nombre');
             $table->string('representante');
             $table->string('telefono');

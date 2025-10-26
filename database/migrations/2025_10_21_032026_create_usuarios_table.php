@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('usuarios', function (Blueprint $table) {
             $table->id('id_usuario');
-            $table->foreingId('id_rol')->constrained('roles','id_rol');
-            $table->foreingId('id_estado')->constrained('estados','id_estado');
+            $table->foreignId('id_rol')->constrained('roles','id_rol');
+            $table->foreignId('id_estado')->constrained('estados','id_estado');
             $table->string('nombre_usuario');
             $table->string('clave');
             $table->timestamps();

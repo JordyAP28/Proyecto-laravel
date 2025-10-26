@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('escenarios', function (Blueprint $table) {
-            $table->id('id_escenario');
-            $table->interger('capacidad');
-            $table->string('nombre');
-            $table->string('tipo');
-            $table->timestamps();
+        Schema::create('programa_actividades', function (Blueprint $table) {
+            $table->id('id_programa_actividad');
+            $table->foreignId('id_escenario')->constrained('escenarios','id_escenario');
+            $table->foreignId('id_actividad')->constrained('actividades','id_actividad');
         });
     }
 
@@ -25,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ecenario');
+        Schema::dropIfExists('programa_actividades');
     }
 };

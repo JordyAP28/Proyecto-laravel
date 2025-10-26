@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('club_campeonatos', function (Blueprint $table) {
             $table->id('id_club_campeonato');
-            $table->foreingId('id_club')->constrained('clubes','id_club');
-            $table->foreingId('id_campeonato')->constrained('campeonatos','id_campeonato');
+            $table->foreignId('id_club')->constrained('clubes','id_club');
+            $table->foreignId('id_campeonato')->constrained('campeonatos','id_campeonato');
         });
     }
 

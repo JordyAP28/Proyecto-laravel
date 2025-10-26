@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('programa_actividades', function (Blueprint $table) {
-            $table->id('id_programa_actividad');
-            $table->foreingId('id_escenario')->constrained('escenarios','id_escenario');
-            $table->foreingId('id_actividad')->constrained('actividad','id_actividad');
+        Schema::create('escenarios', function (Blueprint $table) {
+            $table->id('id_escenario');
+            $table->integer('capacidad');
+            $table->string('nombre');
+            $table->string('tipo');
+            $table->timestamps();
         });
     }
 
@@ -23,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('programa_actividades');
+        Schema::dropIfExists('ecenario');
     }
 };

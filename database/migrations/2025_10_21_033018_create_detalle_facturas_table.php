@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('detalle_factura', function (Blueprint $table) {
-            $table->id();
-            $table->foreingId('id_factura')->constrained('faturas','id_facturas');
+            $table->id('id_detalle_factura');
+            $table->foreignId('id_factura')->constrained('facturas','id_factura');
             $table->text('concepto');
             $table->decimal('monto',10,2);
             $table->timestamps();
