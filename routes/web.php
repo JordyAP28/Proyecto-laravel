@@ -20,6 +20,6 @@ Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 //Si se accede a una ruta no definida se redirecciona al apartado de login
 Route::get('/{slug}', function () {
 
-    return redirect()->route('auth/login');
+    return redirect()->route('login');
 
 })->where('slug', '.*');
