@@ -14,9 +14,15 @@ class Club extends Model
     protected $table = 'clubes';
     protected $primaryKey = 'id_club';
 
-    protected $fillable = ['fecha_creacion', 'id_estado', 'nombre', 'representante', 'telefono'];
+    protected $fillable = [
+        'fecha_creacion',
+        'id_estado',
+        'nombre',
+        'representante',
+        'telefono'
+    ];
 
-    // Relación con Estado: un club pertenece a un estado
+    // Relación con Estado
     public function estado()
     {
         return $this->belongsTo(Estado::class, 'id_estado');

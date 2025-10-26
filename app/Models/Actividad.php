@@ -13,11 +13,17 @@ class Actividad extends Model
     protected $table = 'actividades';
     protected $primaryKey = 'id_actividad';
 
-    protected $fillable = ['fecha', 'hora_inicio', 'hora_fin', 'descripcion', 'nombre_actividad'];
+    protected $fillable = [
+      'fecha',
+      'hora_inicio',
+      'hora_fin',
+      'descripcion',
+      'nombre_actividad'
+    ];
 
-    //Una actividad puede estar en muchos programas
+    // Relacion de actividad y programa actividad
     public function programaActividades()
     {
-      turn $this->hasMany(ProgramaActividad::class, 'id_actividad');
+      return $this->hasMany(ProgramaActividad::class, 'id_actividad');
     }
 }

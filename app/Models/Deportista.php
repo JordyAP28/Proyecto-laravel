@@ -13,7 +13,16 @@ class Deportista extends Model
     protected $table = 'deportistas';
     protected $primaryKey = 'id_deportista';
 
-    protected $fillable = ['fecha_nacimiento', 'fecha_registro', 'cedula', 'nombre', 'apellido', 'correo', 'direccion', 'telefono'];
+    protected $fillable = [
+        'fecha_nacimiento',
+        'fecha_registro',
+        'cedula',
+        'nombre',
+        'apellido',
+        'correo',
+        'direccion',
+        'telefono'
+    ];
 
     // Relación con InscripcionCurso: un deportista puede tener muchas inscripciones
     public function inscripciones()

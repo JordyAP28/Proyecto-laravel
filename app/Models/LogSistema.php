@@ -12,9 +12,12 @@ class LogSistema extends Model
     protected $table = 'log_sistema';
     protected $primaryKey = 'id_log';
 
-    protected $fillable = ['id_usuario', 'accion'];
+    protected $fillable = [
+        'id_usuario',
+        'accion'
+    ];
 
-    // Relación
+    // Relación con usuario
     public function usuario()
     {
         return $this->belongsTo(Usuario::class, 'id_usuario');

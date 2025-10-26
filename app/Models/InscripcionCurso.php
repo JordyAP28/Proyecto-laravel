@@ -12,7 +12,11 @@ class InscripcionCurso extends Model
     protected $table='inscripcion_cursos';
     protected $primaryKey = 'id_inscripcion';
 
-    protected $fillable = ['id_curso', 'id_deportista', 'fecha_inscripcion'];
+    protected $fillable = [
+        'id_curso',
+        'id_deportista',
+        'fecha_inscripcion'
+    ];
 
     // Relación con Curso: cada inscripción pertenece a un curso
     public function curso()

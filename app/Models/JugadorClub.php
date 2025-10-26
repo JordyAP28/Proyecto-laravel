@@ -12,7 +12,12 @@ class JugadorClub extends Model
     protected $table = 'jugador_clubes';
     protected $primaryKey = 'id_jugador';
 
-    protected $fillable = ['id_deportista', 'id_club', 'fecha_ingreso', 'activo'];
+    protected $fillable = [
+        'id_deportista',
+        'id_club',
+        'fecha_ingreso',
+        'activo'
+    ];
 
     // Relación con Deportista: un jugador pertenece a un deportista
     public function deportista()

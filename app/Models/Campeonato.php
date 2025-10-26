@@ -12,10 +12,13 @@ class Campeonato extends Model
     protected $primarykey= 'id_campeonato';
 
     protected $fillable =[
-        'nombre', 'fecha_inicio', 'fecha_fin', 'categoria' 
+        'nombre',
+        'fecha_inicio',
+        'fecha_fin',
+        'categoria' 
     ];
 
-    //un campeonato tendra muchos club. 
+    // Relacion con clubCampeonatos 
     public function clubCampeonatos()
     {
         return $this->hasMany(ClubCampeonato::class, 'id_campeonato');

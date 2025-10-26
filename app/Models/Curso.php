@@ -13,7 +13,14 @@ class Curso extends Model
     protected $table = 'cursos';
     protected $primaryKey = 'id_curso';
 
-    protected $fillable = ['id_estado', 'nombre_curso', 'tipo', 'descripcion', 'fecha_inicio', 'fecha_fin'];
+    protected $fillable = [
+        'id_estado',
+        'nombre_curso',
+        'tipo',
+        'descripcion',
+        'fecha_inicio',
+        'fecha_fin'
+    ];
 
     // Relación con Estado: un curso pertenece a un estado
     public function estado()

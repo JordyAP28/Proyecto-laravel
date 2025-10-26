@@ -14,9 +14,12 @@ class ProgramaActividad extends Model
     protected $table = 'programa_actividades';
     protected $primaryKey = 'id_programa_actividad';
 
-    protected $fillable = ['id_escenario', 'id_actividad'];
+    protected $fillable = [
+        'id_escenario',
+        'id_actividad'
+    ];
 
-    // Relación con Escenario
+    // Relación con escenario
     public function escenario()
     {
         return $this->belongsTo(Escenario::class, 'id_escenario');

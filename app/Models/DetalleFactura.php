@@ -11,7 +11,12 @@ class DetalleFactura extends Model
     use HasFactory;
 
     protected $table = 'detalle_factura';
-    protected $fillable = ['id_factura', 'concepto', 'monto'];
+    protected $primaryKey = 'id_detalle';
+    protected $fillable = [
+        'id_factura',
+        'concepto',
+        'monto'
+    ];
 
     //relacion con factura.
     public function factura()

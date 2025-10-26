@@ -13,7 +13,12 @@ class Factura extends Model
     protected $table='facturas';
     protected $primaryKey = 'id_factura';
 
-    protected $fillable = ['id_deportista', 'fecha_emision', 'total', 'estado'];
+    protected $fillable = [
+        'id_deportista',
+        'fecha_emision',
+        'total',
+        'estado'
+    ];
 
     // Relación con Deportista
     public function deportista()
@@ -21,6 +26,7 @@ class Factura extends Model
         return $this->belongsTo(Deportista::class, 'id_deportista');
     }
 
+    //Relacion con detalles
     public function detalles()
     {
         return $this->hasMany(DetalleFactura::class, 'id_factura');
