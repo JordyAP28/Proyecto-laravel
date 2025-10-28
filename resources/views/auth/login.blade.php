@@ -22,47 +22,66 @@
             <div class="login-box-body" style="border-radius: 5px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);">
                 <p class="login-box-msg" style="font-size: 17px;">Ingresa tus credenciales</p>
 
-                <div class="modal fade modal-slide-in-rigth" id="errorModal" aria-hidden="true" role="dialog" tabindex="-1">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">x</span>                   
-                                </button>
-                                <h4 class="modal-title">Error al iniciar sesión</h4>
-                            </div>
-
-                            <div class="modal-body">
-                                <p id="errorMessage"></p>
-                            </div>
-
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-primary" data-dismiss="modal">Confirmar</button>
-                            </div>
-                        </div>
+                {{-- Mostrar mensaje de éxito (viene del registro) --}}
+                @if(session('success'))
+                    <div class="alert alert-success alert-dismissible">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        {{ session('success') }}
                     </div>
-                </div>
+                @endif
 
-               @if ($errors->any())
-                    <script>
-                        document.addEventListener('DOMContentLoaded', function() {
-                            document.getElementById('errorMessage').innerText = '{{ $errors->first() }}';
-                            $('#errorModal').modal('show');
-                        });
-                    </script>
+                {{-- Mostrar errores de validación --}}
+                @if ($errors->any())
+                    <div class="alert alert-danger alert-dismissible">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        <h4><i class="icon fa fa-ban"></i> Error al iniciar sesión</h4>
+                        <ul style="margin-bottom: 0;">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
                 @endif
 
                 <form action="{{ route('login') }}" method="POST">
                     @csrf
-                    <div class="form-group has-feedback">
-                        <input type="email" class="form-control" name="email" placeholder="Correo Electrónico" required autofocus style="border-radius: 5px;">
-                        <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                    
+                    <div class="form-group has-feedback @error('nombre_usuario') has-error @enderror">
+                        <input type="text" 
+                            class="form-control" 
+                            name="nombre_usuario" 
+                            placeholder="Nombre de Usuario" 
+                            value="{{ old('nombre_usuario') }}"
+                            required 
+                            autofocus 
+                            style="border-radius: 5px;">
+                        <span class="glyphicon glyphicon-user form-control-feedback"></span>
+                        @error('nombre_usuario')
+                            <span class="help-block">{{ $message }}</span>
+                        @enderror
                     </div>
 
-                    <div class="form-group has-feedback">
-                        <input type="password" class="form-control" name="password" placeholder="Contraseña" required style="border-radius: 5px;">
+                    <div class="form-group has-feedback @error('clave') has-error @enderror">
+                        <input type="password" 
+                            class="form-control" 
+                            name="clave" 
+                            placeholder="Contraseña" 
+                            required 
+                            style="border-radius: 5px;">
                         <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                        @error('clave')
+                            <span class="help-block">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-7">
+                            <div class="checkbox icheck">
+                                <label>
+                                    <input type="checkbox" name="remember" value="1"> Recordarme
+                                </label>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="row">
@@ -70,9 +89,11 @@
                             <a href="{{ route('register') }}">Crear un usuario</a>
                         </div>
                         <div class="col-xs-5">
-                            <center>
-                            <button type="submit" class="btn btn-primary" style="background-color: #3498db; border: none; border-radius: 5px;  cursor: pointer; transition: background-color 0.3s, transform 0.3s;">Iniciar Sesión</button>
-                            </center>
+                            <button type="submit" 
+                                    class="btn btn-primary btn-block btn-flat" 
+                                    style="background-color: #3498db; border: none; border-radius: 5px;">
+                                Iniciar Sesión
+                            </button>
                         </div>
                     </div>
                 </form>
@@ -80,10 +101,8 @@
 
         </div>
 
-
         <script src="{{ asset('js/jQuery-2.1.4.min.js') }}"></script>
         <script src="{{ asset('js/bootstrap.min.js') }}"></script>
         <script src="{{ asset('js/app.min.js') }}"></script>
     </body>
 </html>
-

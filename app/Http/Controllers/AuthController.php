@@ -2,59 +2,84 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
 use App\Models\User;
+use App\Models\Rol;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Redirect;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class AuthController extends Controller {
-    // Mostrar formulario de registro
-    public function register()
+class AuthController extends Controller implements HasMiddleware
+{
+    public static function middleware(): array
     {
-        return view('auth.register');
+        return [
+            new Middleware('guest', except: ['logout']),
+            new Middleware('auth', only: ['logout']),
+        ];
     }
 
-    // Guardar registro de usuario
-    public function registerStore(RegisterRequest $formRequest)
+    public function register()
     {
-        $user = User::create([
-            'username' => $formRequest->username,
-            'email'    => $formRequest->email,
-            'password' => Hash::make($formRequest->password),
+        $roles = Rol::whereIn('id_rol', [3, 4])->get();
+        
+        if ($roles->isEmpty()) {
+            $roles = collect([
+                (object)['id_rol' => 3, 'rol' => 'Deportista'],
+                (object)['id_rol' => 4, 'rol' => 'Entrenador']
+            ]);
+        }
+        
+        return view('auth.register', ['roles' => $roles]);
+    }
+
+    public function registerStore(RegisterRequest $request)
+    {
+        User::create([ // ← Cambia esto
+            'username' => $request->username,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
         ]);
 
-        return redirect()
-            ->route('login')
+        return redirect()->route('login')
             ->with('success', 'Registro exitoso. Puedes iniciar sesión.');
     }
 
-    // Mostrar formulario de login
     public function login()
     {
         return view('auth.login');
     }
-
-    // Procesar login
-    public function loginForm(LoginRequest $formRequest)
+    
+    public function loginForm(LoginRequest $request)
     {
-        if (Auth::attempt([
-            'email'    => $formRequest->email, 
-            'password' => $formRequest->password
-        ])) {
-            return Redirect::to('ventas/venta');
+        $credentials = [
+            'email' => $request->email,
+            'password' => $request->password
+        ];
+
+        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+            $request->session()->regenerate();
+            
+            return redirect()->intended('ventas/venta')
+                ->with('success', '¡Bienvenido de nuevo!');
         }
 
-        return redirect()
-            ->route('login')
-            ->withErrors(['email' => 'Credenciales incorrectas.']);
+        return back()
+            ->withErrors(['email' => 'Credenciales incorrectas.'])
+            ->onlyInput('email');
     }
 
-    // Cerrar sesión
-    public function logout()
+    public function logout(Request $request)
     {
         Auth::logout();
-        return redirect()->route('login');
+        
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login')
+            ->with('success', 'Sesión cerrada exitosamente.');
     }
 }

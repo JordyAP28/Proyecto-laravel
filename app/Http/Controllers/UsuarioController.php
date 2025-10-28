@@ -3,111 +3,109 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
+use App\Http\Requests\UsuarioFormRequest;
 use App\Models\Usuario;
 use App\Models\Rol;
 use App\Models\Estado;
-use App\Models\LogSistema;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-
-class UsuarioController extends Controller
-
+class UsuarioController extends Controller implements HasMiddleware
 {
-    //se agrega todo los usuarios
-    public function index()
+    public static function middleware(): array
     {
-        //Se va a observar todos los usuarios con su rol y estado
-        return Usuario::with(['rol', 'estado'])->get();
+        return ['auth'];
     }
 
-    //formulacion de creacion.
+    public function index(Request $request)
+    {
+        $query = trim($request->get('searchText', ''));
+        
+        $usuarios = Usuario::with(['rol', 'estado'])
+            ->where('username', 'LIKE', '%' . $query . '%')
+            ->orWhere('email', 'LIKE', '%' . $query . '%')
+            ->orderBy('id', 'desc')
+            ->paginate(7);
+
+        return view('seguridad.usuario.index', [
+            'usuarios' => $usuarios,
+            'searchText' => $query
+        ]);
+    }
+
     public function create()
     {
-        // En APIs no es necesario, se puede dejar vacío o enviar info de apoyo
-        return response()->json([
-            'roles' => Rol::all(),
-            'estados' => Estado::all()
+        $roles = Rol::all();
+        $estados = Estado::all();
+
+        return view('seguridad.usuario.create', [
+            'roles' => $roles,
+            'estados' => $estados
         ]);
     }
 
-    //se guardara. 
-    public function store(Request $request)
+    public function store(UsuarioFormRequest $request)
     {
-        //validacion.
-        $validated = $request->validate([
-            'nombre_usuario' => 'required|string|max:255',
-            'clave' => 'required|string|max:255',
-            'id_rol' => 'required|exists:roles,id_rol',
-            'id_estado' => 'required|exists:estados,id_estado'
+        Usuario::create([
+            'username' => $request->username,
+            'email' => $request->email,
+            'password' => $request->password,
+            'id_rol' => $request->id_rol,
+            'id_estado' => $request->id_estado ?? 1,
         ]);
 
-        // Crear el usuario
-        $usuario = Usuario::create($validated);
-
-        // Retornar respuesta
-        return response()->json($usuario, 201);
-    }
-    //un usuario en especifico se mostrara.
-    public function show(string $id)
-    {
-        
-        $usuario = Usuario::with(['rol', 'estado', 'logs'])->find($id);
-
-        if (!$usuario) {
-            return response()->json(['message' => 'Usuario no encontrado'], 404);
-        }
-
-        return response()->json($usuario);
+        return Redirect::to('seguridad/usuario')
+            ->with('success', 'Usuario creado exitosamente');
     }
 
-    //formula de edicion 
-    public function edit(string $id)
+    public function edit($id)
     {
-         $usuario = Usuario::find($id);
+        $usuario = Usuario::with(['rol', 'estado'])->findOrFail($id);
+        $roles = Rol::all();
+        $estados = Estado::all();
 
-        if (!$usuario) {
-            return response()->json(['message' => 'Usuario no encontrado'], 404);
-        }
-
-        return response()->json([
+        return view('seguridad.usuario.edit', [
             'usuario' => $usuario,
-            'roles' => Rol::all(),
-            'estados' => Estado::all()
+            'roles' => $roles,
+            'estados' => $estados
         ]);
     }
 
-    //actualizar usuario
-    public function update(Request $request, string $id)
+    public function update(UsuarioFormRequest $request, $id)
     {
-        $usuario = Usuario::find($id);
+        $usuario = Usuario::findOrFail($id);
+        
+        $data = [
+            'username' => $request->username,
+            'email' => $request->email,
+            'id_rol' => $request->id_rol,
+            'id_estado' => $request->id_estado,
+        ];
 
-        if (!$usuario) {
-            return response()->json(['message' => 'Usuario no encontrado'], 404);
+        if ($request->filled('password')) {
+            $data['password'] = $request->password;
         }
 
-        $validated = $request->validate([
-            'nombre_usuario' => 'sometimes|string|max:255',
-            'clave' => 'sometimes|string|max:255',
-            'id_rol' => 'sometimes|exists:roles,id_rol',
-            'id_estado' => 'sometimes|exists:estados,id_estado'
-        ]);
+        $usuario->update($data);
 
-        $usuario->update($validated);
-
-        return response()->json($usuario);
+        return Redirect::to('seguridad/usuario')
+            ->with('success', 'Usuario actualizado exitosamente');
     }
 
-    //eliminar usuario
-    public function destroy(string $id)
+    public function destroy($id)
     {
-         $usuario = Usuario::find($id);
+        $usuario = Usuario::findOrFail($id);
+        $usuario->update(['id_estado' => 2]); // Desactivar
 
-        if (!$usuario) {
-            return response()->json(['message' => 'Usuario no encontrado'], 404);
-        }
-
-        $usuario->delete();
-
-        return response()->json(['message' => 'Usuario eliminado']);
+        return Redirect::to('seguridad/usuario')
+            ->with('success', 'Usuario desactivado exitosamente');
     }
-    
+
+    public function show($id)
+    {
+        $usuario = Usuario::with(['rol', 'estado', 'logs'])->findOrFail($id);
+
+        return view('seguridad.usuario.show', ['usuario' => $usuario]);
+    }
 }
