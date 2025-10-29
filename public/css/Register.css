@@ -1,0 +1,165 @@
+/* ===== Reset y cuerpo ===== */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f4f6f9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* ===== Contenedor horizontal ===== */
+.login-horizontal-container {
+  display: flex;
+  background: #fff;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  overflow: hidden;
+  width: 900px;
+  max-width: 95%;
+}
+
+/* ===== Lados izquierdo y derecho ===== */
+.login-left, .login-right {
+  flex: 1;
+  padding: 40px;
+}
+
+.login-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: #fcfaff; /* cuadro formulario */
+}
+
+.login-left h2 {
+  margin-bottom: 20px;
+  color: #5791b8;
+  font-size: 28px;
+  text-align: center;
+}
+
+/* ===== Inputs ===== */
+.login-left input,
+.login-left select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  transition: all 0.3s;
+}
+
+.login-left input:focus,
+.login-left select:focus {
+  border-color: #658ea8;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.4);
+}
+
+/* ===== Botones ===== */
+.botones {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.botones button {
+  flex: 1;
+  background-color: #da9abf;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.botones button:hover {
+  background-color: #c17db7;
+}
+
+/* ===== Mensajes ===== */
+.mensaje {
+  margin-top: 15px;
+  text-align: center;
+  color: #4b6783;
+  font-weight: bold;
+}
+
+.alert {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 10px 15px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+/* ===== Links ===== */
+.links {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.links a {
+  color: #6065a3;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.links a:hover {
+  transform: scale(1.05);
+  color: #7980c0;
+  text-decoration: underline;
+}
+
+.links a:active {
+  transform: scale(0.95);
+  color: #485373;
+}
+
+/* ===== Lado derecho - imagen ===== */
+.login-right {
+  background: #cdc9e4;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-right img {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.info-text {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.info-text h1 {
+  font-size: 22px;
+  color: #2a3249;
+}
+
+.info-text p {
+  color: #0d0a13;
+  font-size: 15px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .login-horizontal-container {
+    flex-direction: column;
+  }
+
+  .login-right {
+    display: none;
+  }
+}
