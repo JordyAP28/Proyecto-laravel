@@ -1,125 +1,69 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Registro</title>
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/font-awesome.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/AdminLTE.min.css') }}">
-    <link rel="apple-touch-icon" href="{{ asset('img/apple-touch-icon.png') }}">
-    <link rel="shortcut icon" href="{{ asset('img/favicon.ico') }}">
+    <meta charset="UTF-8">
+    <title>Registro de Estudiante</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ asset('css/Register.css') }}">
 </head>
+<body>
 
-<body class="hold-transition login-page">
-    <div class="login-box">
-        <div class="login-logo">
-            <a href="#"><b>Registro</b> de Usuario</a>
+<div class="login-horizontal-container">
+    {{-- Lado izquierdo: formulario --}}
+    <div class="login-left">
+        <h2>Crear cuenta de estudiante</h2>
+
+        {{-- Mensajes de éxito --}}
+        @if (session('success'))
+            <div class="alert success">{{ session('success') }}</div>
+        @endif
+
+        {{-- Errores de validación --}}
+        @if ($errors->any())
+            <div class="alert">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        {{-- Formulario --}}
+        <form method="POST" action="{{ route('register.store') }}">
+            @csrf
+
+            <label for="username">Nombre completo</label>
+            <input type="text" id="username" name="username" placeholder="Tu nombre completo" value="{{ old('username') }}" required>
+
+            <label for="email">Correo electrónico</label>
+            <input type="email" id="email" name="email" placeholder="tucorreo@ejemplo.com" value="{{ old('email') }}" required>
+
+            <label for="password">Contraseña</label>
+            <input type="password" id="password" name="password" placeholder="Mínimo 6 caracteres" required minlength="6">
+
+            <label for="password_confirmation">Confirmar contraseña</label>
+            <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Repite tu contraseña" required minlength="6">
+
+            <div class="botones">
+                <button type="submit">Registrarse</button>
+            </div>
+        </form>
+
+        <div class="links">
+            <p>¿Ya tienes una cuenta? <a href="{{ route('login') }}">Inicia sesión</a></p>
         </div>
-
-        <div class="login-box-body" style="border-radius: 5px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);">
-            <p class="login-box-msg" style="font-size: 17px;">Crear Usuario</p>
-
-            {{-- Mostrar mensaje de error general --}}
-            @if(session('error'))
-                <div class="alert alert-danger alert-dismissible">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                    {{ session('error') }}
-                </div>
-            @endif
-
-            {{-- Mostrar todos los errores de validación --}}
-            @if ($errors->any())
-                <div class="alert alert-danger alert-dismissible">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                    <h4><i class="icon fa fa-ban"></i> Errores en el formulario</h4>
-                    <ul style="margin-bottom: 0;">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
-            <form action="{{ route('register') }}" method="POST">
-                @csrf
-                
-                <div class="form-group has-feedback @error('nombre_usuario') has-error @enderror">
-                    <input type="text" 
-                        class="form-control" 
-                        name="nombre_usuario" 
-                        placeholder="Nombre de Usuario" 
-                        value="{{ old('nombre_usuario') }}"
-                        required 
-                        autofocus
-                        style="border-radius: 5px;">
-                    <span class="glyphicon glyphicon-user form-control-feedback"></span>
-                    @error('nombre_usuario')
-                        <span class="help-block">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                {{-- Selector de Rol --}}
-                <div class="form-group @error('id_rol') has-error @enderror">
-                    <label>Tipo de Usuario</label>
-                    <select class="form-control" name="id_rol" required style="border-radius: 5px;">
-                        <option value="">Selecciona...</option>
-                        @foreach($roles as $rol)
-                            <option value="{{ $rol->id_rol }}" {{ old('id_rol') == $rol->id_rol ? 'selected' : '' }}>
-                                {{ $rol->rol }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('id_rol')
-                        <span class="help-block">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <div class="form-group has-feedback @error('clave') has-error @enderror">
-                    <input type="password" 
-                        class="form-control" 
-                        name="clave" 
-                        placeholder="Contraseña" 
-                        required 
-                        style="border-radius: 5px;">
-                    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
-                    @error('clave')
-                        <span class="help-block">{{ $message }}</span>
-                    @enderror
-                    <small class="text-muted">Mínimo 8 caracteres</small>
-                </div>
-
-                <div class="form-group has-feedback @error('clave') has-error @enderror">
-                    <input type="password" 
-                        class="form-control" 
-                        name="clave_confirmation" 
-                        placeholder="Confirmar Contraseña" 
-                        required 
-                        style="border-radius: 5px;">
-                    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
-                </div>
-
-                <div class="row">
-                    <div class="col-xs-7">
-                        <a href="{{ route('login') }}">Ya tengo un usuario</a>
-                    </div>
-
-                    <div class="col-xs-5">
-                        <button type="submit" 
-                                class="btn btn-primary btn-block btn-flat" 
-                                style="background-color: #3498db; border: none; border-radius: 5px;">
-                            Registrarse
-                        </button>
-                    </div>
-                </div>
-            </form>
-        </div>
-
     </div>
 
-    <script src="{{ asset('js/jQuery-2.1.4.min.js') }}"></script>
-    <script src="{{ asset('js/bootstrap.min.js') }}"></script>
-    <script src="{{ asset('js/app.min.js') }}"></script>
+    {{-- Lado derecho: imagen e información --}}
+    <div class="login-right">
+        <img src="{{ asset('images/estudiante-register.jpg') }}" alt="Registro de estudiante">
+        <div class="info-text">
+            <h1>Bienvenido al portal de estudiantes</h1>
+            <p>Regístrate para acceder a tus cursos, inscripciones y más.</p>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

@@ -6,30 +6,30 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class RegisterRequest extends FormRequest
 {
-    public function authorize(): bool
+    public function authorize()
     {
         return true;
     }
 
-    public function rules(): array
+    public function rules()
     {
         return [
-            'nombre_usuario' => 'required|string|max:255|unique:usuarios,nombre_usuario',
-            'clave' => 'required|string|min:8|confirmed',
-            'id_rol' => 'required|exists:roles,id_rol|in:3,4',
+            'username' => 'required|string|max:255',
+            'email' => 'required|email|unique:usuarios,email',
+            'password' => 'required|string|min:6|confirmed',
         ];
     }
 
-    public function messages(): array
+    public function messages()
     {
         return [
-            'nombre_usuario.required' => 'El nombre de usuario es obligatorio',
-            'nombre_usuario.unique' => 'Este nombre de usuario ya está en uso',
-            'clave.required' => 'La contraseña es obligatoria',
-            'clave.min' => 'La contraseña debe tener al menos 8 caracteres',
-            'clave.confirmed' => 'Las contraseñas no coinciden',
-            'id_rol.required' => 'Debes seleccionar un tipo de usuario',
-            'id_rol.in' => 'Solo puedes registrarte como Deportista o Entrenador',
+            'username.required' => 'El nombre de usuario es obligatorio',
+            'email.required' => 'El correo electrónico es obligatorio',
+            'email.email' => 'El formato del correo no es válido',
+            'email.unique' => 'Este correo ya está registrado',
+            'password.required' => 'La contraseña es obligatoria',
+            'password.min' => 'La contraseña debe tener al menos 6 caracteres',
+            'password.confirmed' => 'Las contraseñas no coinciden',
         ];
     }
 }
