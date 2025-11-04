@@ -108,4 +108,18 @@ class UsuarioController extends Controller implements HasMiddleware
 
         return view('seguridad.usuario.show', ['usuario' => $usuario]);
     }
+
+
+    public function recuperarContrasena()
+{
+    // Retorna la vista del formulario para recuperar contraseña
+    return view('auth.recuperar_contrasena');
+}
+
+public function reestablecerContrasena()
+{
+    // Retorna la vista del formulario para reestablecer contraseña
+    return view('auth.reestablecer_contrasena');
+}
+
 }

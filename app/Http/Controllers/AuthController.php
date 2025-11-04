@@ -22,6 +22,27 @@ class AuthController extends Controller implements HasMiddleware
         ];
     }
 
+    public function recuperarContrasena()
+    {
+        return view('auth.recuperarcontrasena');
+    }
+    
+
+    public function reestablecerContrasena()
+    {
+    return view('auth.reestablecercontrasena');
+    }
+    
+    public function actualizarContrasena(Request $request)
+{
+    $request->validate([
+        'token' => 'required',
+        'password' => 'required|confirmed|min:8',
+    ]);
+
+    
+    return redirect()->route('login')->with('success', 'Contraseña actualizada correctamente.');
+}
     public function register()
     {
         $roles = Rol::whereIn('id_rol', [3, 4])->get();
@@ -38,7 +59,7 @@ class AuthController extends Controller implements HasMiddleware
 
     public function registerStore(RegisterRequest $request)
     {
-        User::create([ // ← Cambia esto
+        User::create([
             'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),

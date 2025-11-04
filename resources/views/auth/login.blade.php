@@ -60,10 +60,15 @@
       <?php endif; ?>
 
       <p class="links">
+
         <a href="recuperar_contrasena.php">¿Olvidaste tu contraseña?</a> |
         <a href="registro.php">Registrarse</a>
+
+      <a href="{{ url('recuperar-contrasena') }}">¿Olvidaste tu contraseña?</a>||
+      <a href='register'>Registrarse</a>
+
       </p>
-     </div>
+    </div>
 
 
     <!-- Lado derecho - imagen -->
