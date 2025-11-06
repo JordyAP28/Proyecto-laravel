@@ -7,49 +7,46 @@ use App\Models\User;
 use App\Models\Rol;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Routing\Controllers\HasMiddleware;
-use Illuminate\Routing\Controllers\Middleware;
 
-class AuthController extends Controller implements HasMiddleware
+class AuthController extends Controller
 {
-    public static function middleware(): array
-    {
-        return [
-            new Middleware('guest', except: ['logout']),
-            new Middleware('auth', only: ['logout']),
+    // ==============================
+    // Login
+    // ==============================
+    public function login() {
+        return view('auth.login');
+    }
+
+    public function loginForm(Request $request) {
+        $credentials = [
+            'nombre_usuario' => $request->nombre_usuario,
+            'password' => $request->password
         ];
+
+        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+            $request->session()->regenerate();
+            return redirect()->route('dashboard.estudiante')->with('success', '¡Bienvenido de nuevo!');
+        }
+
+        return back()->withErrors(['nombre_usuario' => 'Credenciales incorrectas.'])->onlyInput('nombre_usuario');
     }
 
     // ==============================
-    // Recuperar / Reestablecer Contraseña
+    // Logout
     // ==============================
-    public function recuperarContrasena()
-    {
-        return view('auth.recuperarcontrasena');
-    }
+    public function logout(Request $request) {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
-    public function reestablecerContrasena()
-    {
-        return view('auth.reestablecercontrasena');
-    }
-
-    public function actualizarContrasena(Request $request)
-    {
-        $request->validate([
-            'token' => 'required',
-            'password' => 'required|confirmed|min:8',
-        ]);
-
-        return redirect()->route('login')->with('success', 'Contraseña actualizada correctamente.');
+        return redirect()->route('login')->with('success', 'Sesión cerrada exitosamente.');
     }
 
     // ==============================
-    // Registro
+    // Registro general
     // ==============================
-    public function register()
-    {
-        // Solo por si usas roles en la tabla
-        $roles = Rol::whereIn('id_rol', [3, 4])->get();
+    public function register() {
+        $roles = Rol::whereIn('id_rol', [3,4])->get();
 
         if ($roles->isEmpty()) {
             $roles = collect([
@@ -61,68 +58,78 @@ class AuthController extends Controller implements HasMiddleware
         return view('auth.register', ['roles' => $roles]);
     }
 
-    public function registerStore(Request $request)
-    {
-        // Validación simple, basada en tu formulario
+    public function registerStore(Request $request) {
         $request->validate([
             'username' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255', // opcional si tu tabla no lo usa
+            'email' => 'nullable|email|max:255',
             'password' => 'required|confirmed|min:6',
         ]);
 
-        // Crear usuario
         $user = User::create([
             'nombre_usuario' => $request->username,
             'clave' => Hash::make($request->password),
-            'id_rol' => 3, // puedes ajustar según el tipo de usuario
+            'id_rol' => 3,
             'id_estado' => 1,
         ]);
 
-        // Iniciar sesión automáticamente
         Auth::login($user);
 
-        return redirect()->route('dashboard.estudiante')
-            ->with('success', 'Registro exitoso. ¡Bienvenido!');
+        return redirect()->route('dashboard.estudiante')->with('success', 'Registro exitoso. ¡Bienvenido!');
     }
 
     // ==============================
-    // Inicio de Sesión
+    // Registro de estudiantes (cursos vacacionales)
     // ==============================
-    public function login()
-    {
-        return view('auth.login');
+    public function showRegistroEstudiante() {
+        return view('auth.registro'); // resources/views/registro.blade.php
     }
 
-    public function loginForm(Request $request)
-    {
-        $credentials = [
-            'nombre_usuario' => $request->nombre_usuario,
-            'password' => $request->password
-        ];
+    public function registrarEstudiante(Request $request) {
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'correo' => 'required|email|unique:estudiantes,correo',
+            'curso' => 'required|string',
+            'password' => 'required|confirmed|min:6',
+            'pago' => 'required',
+            'comprobante' => 'nullable|image|max:2048'
+        ]);
 
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
-            $request->session()->regenerate();
+        $estudiante = new \App\Models\Estudiante();
+        $estudiante->nombre = $request->nombre;
+        $estudiante->correo = $request->correo;
+        $estudiante->curso = $request->curso;
+        $estudiante->password = bcrypt($request->password);
+        $estudiante->pago = $request->pago;
 
-            return redirect()->route('dashboard.estudiante')
-                ->with('success', '¡Bienvenido de nuevo!');
+        if ($request->hasFile('comprobante')) {
+            $file = $request->file('comprobante');
+            $filename = time().'_'.$file->getClientOriginalName();
+            $file->storeAs('public/comprobantes', $filename);
+            $estudiante->comprobante = $filename;
         }
 
-        return back()
-            ->withErrors(['nombre_usuario' => 'Credenciales incorrectas.'])
-            ->onlyInput('nombre_usuario');
+        $estudiante->save();
+
+        return redirect()->route('login')->with('success', 'Registro exitoso');
     }
 
     // ==============================
-    // Cerrar Sesión
+    // Recuperar / Reestablecer contraseña
     // ==============================
-    public function logout(Request $request)
-    {
-        Auth::logout();
+    public function recuperarContrasena() {
+        return view('auth.recuperarcontrasena');
+    }
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+    public function reestablecerContrasena() {
+        return view('auth.reestablecercontrasena');
+    }
 
-        return redirect()->route('login')
-            ->with('success', 'Sesión cerrada exitosamente.');
+    public function actualizarContrasena(Request $request) {
+        $request->validate([
+            'token' => 'required',
+            'password' => 'required|confirmed|min:8',
+        ]);
+
+        return redirect()->route('login')->with('success', 'Contraseña actualizada correctamente.');
     }
 }

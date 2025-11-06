@@ -1,0 +1,111 @@
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  background: #e0f7fa;
+  color: #333;
+}
+
+.registro-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.registro-box {
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 500px;
+}
+
+.registro-box h2 {
+  margin-bottom: 25px;
+  color: #007bff;
+  text-align: center;
+}
+
+/* FORMULARIO */
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* RADIO */
+.radio-group {
+  display: flex;
+  gap: 15px;
+}
+
+.radio-group input {
+  margin-right: 5px;
+}
+
+/* PROCEDIMIENTOS */
+.procedimientos {
+  background: #f1f8f9;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.procedimientos h3 {
+  margin-top: 0;
+  color: #007bff;
+}
+
+/* BOTÓN */
+.register-btn {
+  width: 100%;
+  padding: 12px;
+  background: #007bff;
+  color: #fff;
+  font-size: 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.register-btn:hover {
+  background: #0056b3;
+}
+
+/* ENLACE LOGIN */
+.login-link {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.login-link a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
+}

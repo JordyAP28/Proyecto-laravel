@@ -1,8 +1,27 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-function App() {
-  return <h1>¡Hola desde React dentro de Laravel!</h1>;
-}
+// Importa tus componentes según los archivos que tienes
+import EstudiantePanel from "./components/EstudiantePanel";
+import Login from "./components/Login";
+import RecuperarContrasena from "./components/recuperarcontrasena";
+import ReestablecerContrasena from "./components/reestablecercontrasena";
+import Register from "./components/register";
+import Registro from "./components/registro";
 
-ReactDOM.createRoot(document.getElementById('react-root')).render(<App />);
+// Montaje principal de React
+ReactDOM.createRoot(document.getElementById("react-root")).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/recuperar-contrasena" element={<RecuperarContrasena />} />
+        <Route path="/reestablecer-contrasena" element={<ReestablecerContrasena />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/registro" element={<Registro />} />
+        <Route path="/estudiante" element={<EstudiantePanel />} />
+      </Routes>
+    </BrowserRouter>
+  </React.StrictMode>
+);

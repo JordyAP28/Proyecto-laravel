@@ -1,0 +1,88 @@
+/* Fondo general pastel */
+.recuperar-page {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #a0c4ff; /* Fondo único, suave y agradable */
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+}
+
+/* Contenedor del formulario */
+.recuperar-container {
+  background: #ffffff;
+  padding: 40px 30px;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+/* Título */
+.recuperar-container h2 {
+  color: #1d4ed8;
+  font-size: 24px;
+  margin-bottom: 25px;
+}
+
+/* Etiquetas e inputs */
+.recuperar-container label {
+  display: block;
+  text-align: left;
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.recuperar-container input[type="email"] {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-bottom: 18px;
+  font-size: 15px;
+  transition: all 0.3s ease;
+}
+
+.recuperar-container input:focus {
+  border-color: #1d4ed8;
+  box-shadow: 0 0 8px rgba(29, 78, 216, 0.3);
+  outline: none;
+}
+
+/* Botón */
+.recuperar-container button {
+  width: 100%;
+  padding: 12px;
+  background-color: #1d4ed8;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.recuperar-container button:hover {
+  background-color: #1e40af;
+  transform: scale(1.02);
+}
+
+/* Links */
+.info-link {
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+.info-link a {
+  color: #1d4ed8;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.info-link a:hover {
+  text-decoration: underline;
+}
