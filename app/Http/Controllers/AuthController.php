@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Requests\RegisterRequest;
-use App\Http\Requests\LoginRequest;
 use App\Models\User;
 use App\Models\Rol;
 use Illuminate\Support\Facades\Auth;
@@ -22,44 +20,24 @@ class AuthController extends Controller implements HasMiddleware
         ];
     }
 
-    public function recuperarContrasena()
-    {
-        return view('auth.recuperarcontrasena');
-    }
-    
-
-    public function reestablecerContrasena()
-    {
-    return view('auth.reestablecercontrasena');
-    }
-    
-    public function actualizarContrasena(Request $request)
-{
-    $request->validate([
-        'token' => 'required',
-        'password' => 'required|confirmed|min:8',
-    ]);
-
-    
-    return redirect()->route('login')->with('success', 'Contraseña actualizada correctamente.');
-}
     public function register()
     {
+        // Solo por si usas roles en la tabla
         $roles = Rol::whereIn('id_rol', [3, 4])->get();
-        
+
         if ($roles->isEmpty()) {
             $roles = collect([
-                (object)['id_rol' => 3, 'rol' => 'Deportista'],
-                (object)['id_rol' => 4, 'rol' => 'Entrenador']
+                (object)['id_rol' => 3, 'rol' => 'Estudiante'],
+                (object)['id_rol' => 4, 'rol' => 'Profesor']
             ]);
         }
-        
+
         return view('auth.register', ['roles' => $roles]);
     }
 
-    public function registerStore(RegisterRequest $request)
+    public function registerStore(Request $request)
     {
-        User::create([
+        User::create([ // ← Cambia esto
             'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
@@ -73,30 +51,33 @@ class AuthController extends Controller implements HasMiddleware
     {
         return view('auth.login');
     }
-    
-    public function loginForm(LoginRequest $request)
+
+    public function loginForm(Request $request)
     {
         $credentials = [
-            'email' => $request->email,
+            'nombre_usuario' => $request->nombre_usuario,
             'password' => $request->password
         ];
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
-            
-            return redirect()->intended('ventas/venta')
+
+            return redirect()->route('dashboard.estudiante')
                 ->with('success', '¡Bienvenido de nuevo!');
         }
 
         return back()
-            ->withErrors(['email' => 'Credenciales incorrectas.'])
-            ->onlyInput('email');
+            ->withErrors(['nombre_usuario' => 'Credenciales incorrectas.'])
+            ->onlyInput('nombre_usuario');
     }
 
+    // ==============================
+    // Cerrar Sesión
+    // ==============================
     public function logout(Request $request)
     {
         Auth::logout();
-        
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 

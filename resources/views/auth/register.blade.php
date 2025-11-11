@@ -1,115 +1,125 @@
-<?php
-$mensaje = "";
-$errores = [];
-
-// Inicializar datos para mantenerlos al recargar
-$formData = [
-    'nombre' => '',
-    'apellido' => '',
-    'edad' => '',
-    'email' => '',
-    'telefono' => '',
-    'fechaNacimiento' => '',
-    'dirrecion' => '',
-    'curso' => '',
-    'password' => '',
-    'confirmarPassword' => ''
-];
-
-// Procesar formulario
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $formData = array_map('trim', $_POST);
-
-    // Validaciones
-    if (!preg_match("/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/", $formData['nombre'])) $errores[] = "Nombre inválido (solo letras).";
-    if (!preg_match("/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/", $formData['apellido'])) $errores[] = "Apellido inválido (solo letras).";
-    if (!preg_match("/^\d+$/", $formData['edad'])) $errores[] = "Edad inválida (solo números).";
-    if (!preg_match("/^\d{4}-\d{2}-\d{2}$/", $formData['fechaNacimiento'])) $errores[] = "Fecha de nacimiento inválida (YYYY-MM-DD).";
-    if (!preg_match("/^\d{10,}$/", $formData['telefono'])) $errores[] = "Teléfono inválido (mínimo 10 dígitos).";
-    if (!filter_var($formData['email'], FILTER_VALIDATE_EMAIL)) $errores[] = "Correo electrónico inválido.";
-    if (strlen($formData['password']) < 6) $errores[] = "La contraseña debe tener al menos 6 caracteres.";
-    if ($formData['password'] !== $formData['confirmarPassword']) $errores[] = "Las contraseñas no coinciden.";
-    if (empty($formData['curso'])) $errores[] = "Debe seleccionar un curso.";
-    if (empty($formData['dirrecion'])) $errores[] = "Debe ingresar su dirección.";
-
-    if (empty($errores)) {
-        // Aquí podrías insertar a la base de datos
-        $mensaje = "Usuario registrado correctamente ";
-        // Limpiar formulario
-        $formData = array_map(function() { return ''; }, $formData);
-    }
-}
-
-// Cursos disponibles
-$cursos = ['Pintura', 'Basquetbol', 'Futbol', 'Música'];
-?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Registro</title>
-    <meta content="width=device-width, initial-scale=1" name="viewport">
-    <link rel="stylesheet" href="{{ asset('css/Register.css') }}">
-
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/font-awesome.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/AdminLTE.min.css') }}">
+    <link rel="apple-touch-icon" href="{{ asset('img/apple-touch-icon.png') }}">
+    <link rel="shortcut icon" href="{{ asset('img/favicon.ico') }}">
 </head>
-<body>
 
-<div class="login-horizontal-container">
-    <!-- Lado izquierdo - formulario -->
-    <div class="login-left">
-        <h2>Registro</h2>
-
-        <!-- Mensajes -->
-        <?php if(!empty($mensaje)): ?>
-            <p class="mensaje"><?= $mensaje ?></p>
-        <?php endif; ?>
-
-        <?php if(!empty($errores)): ?>
-            <div class="alert alert-danger">
-                <ul>
-                    <?php foreach($errores as $error): ?>
-                        <li><?= $error ?></li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
-        <?php endif; ?>
-
-        <form action="" method="POST">
-            <input type="text" name="nombre" placeholder="Nombre" value="<?= htmlspecialchars($formData['nombre']) ?>" required>
-            <input type="text" name="apellido" placeholder="Apellido" value="<?= htmlspecialchars($formData['apellido']) ?>" required>
-            <input type="text" name="edad" placeholder="Edad" value="<?= htmlspecialchars($formData['edad']) ?>" required>
-            <input type="email" name="email" placeholder="Correo electrónico" value="<?= htmlspecialchars($formData['email']) ?>" required>
-            <input type="text" name="telefono" placeholder="Teléfono" value="<?= htmlspecialchars($formData['telefono']) ?>" required>
-            <input type="text" name="fechaNacimiento" placeholder="Fecha de nacimiento (YYYY-MM-DD)" value="<?= htmlspecialchars($formData['fechaNacimiento']) ?>" required>
-            <input type="text" name="dirrecion" placeholder="Dirección" value="<?= htmlspecialchars($formData['dirrecion']) ?>" required>
-            
-            <select name="curso" required>
-                <option value="">Seleccione un curso</option>
-                <?php foreach($cursos as $curso): ?>
-                    <option value="<?= $curso ?>" <?= ($formData['curso'] === $curso) ? 'selected' : '' ?>><?= $curso ?></option>
-                <?php endforeach; ?>
-            </select>
-
-            <input type="password" name="password" placeholder="Contraseña" required>
-            <input type="password" name="confirmarPassword" placeholder="Confirmar contraseña" required>
-
-            <div class="botones">
-                <button type="submit">Registrarse</button>
-                <button type="button" onclick="window.location.href='login.php'">Ir a Inicio</button>
-            </div>
-        </form>
-    </div>
-
-    <!-- Lado derecho - imagen -->
-    <div class="login-right">
-        <img src="https://tse4.mm.bing.net/th/id/OIP.F7fZwAaY6dyjhKQF1G4aOQHaFu?w=750&h=580&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Cursos Vacacionales">
-        <div class="info-text">
-            <h1>Cursos Vacacionales 2025</h1>
-            <p>Aprende, diviértete y aprovecha tus vacaciones con nosotros</p>
+<body class="hold-transition login-page">
+    <div class="login-box">
+        <div class="login-logo">
+            <a href="#"><b>Registro</b> de Usuario</a>
         </div>
-    </div>
-</div>
 
+        <div class="login-box-body" style="border-radius: 5px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);">
+            <p class="login-box-msg" style="font-size: 17px;">Crear Usuario</p>
+
+            {{-- Mostrar mensaje de error general --}}
+            @if(session('error'))
+                <div class="alert alert-danger alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            {{-- Mostrar todos los errores de validación --}}
+            @if ($errors->any())
+                <div class="alert alert-danger alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    <h4><i class="icon fa fa-ban"></i> Errores en el formulario</h4>
+                    <ul style="margin-bottom: 0;">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <form action="{{ route('register.store') }}" method="POST">
+                @csrf
+                
+                <div class="form-group has-feedback @error('nombre_usuario') has-error @enderror">
+                    <input type="text" 
+                        class="form-control" 
+                        name="nombre_usuario" 
+                        placeholder="Nombre de Usuario" 
+                        value="{{ old('nombre_usuario') }}"
+                        required 
+                        autofocus
+                        style="border-radius: 5px;">
+                    <span class="glyphicon glyphicon-user form-control-feedback"></span>
+                    @error('nombre_usuario')
+                        <span class="help-block">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                {{-- Selector de Rol --}}
+                <div class="form-group @error('id_rol') has-error @enderror">
+                    <label>Tipo de Usuario</label>
+                    <select class="form-control" name="id_rol" required style="border-radius: 5px;">
+                        <option value="">Selecciona...</option>
+                        @foreach($roles as $rol)
+                            <option value="{{ $rol->id_rol }}" {{ old('id_rol') == $rol->id_rol ? 'selected' : '' }}>
+                                {{ $rol->rol }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('id_rol')
+                        <span class="help-block">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group has-feedback @error('clave') has-error @enderror">
+                    <input type="password" 
+                        class="form-control" 
+                        name="clave" 
+                        placeholder="Contraseña" 
+                        required 
+                        style="border-radius: 5px;">
+                    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                    @error('clave')
+                        <span class="help-block">{{ $message }}</span>
+                    @enderror
+                    <small class="text-muted">Mínimo 8 caracteres</small>
+                </div>
+
+                <div class="form-group has-feedback @error('clave') has-error @enderror">
+                    <input type="password" 
+                        class="form-control" 
+                        name="clave_confirmation" 
+                        placeholder="Confirmar Contraseña" 
+                        required 
+                        style="border-radius: 5px;">
+                    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-7">
+                        <a href="{{ route('login') }}">Ya tengo un usuario</a>
+                    </div>
+
+                    <div class="col-xs-5">
+                        <button type="submit" 
+                                class="btn btn-primary btn-block btn-flat" 
+                                style="background-color: #3498db; border: none; border-radius: 5px;">
+                            Registrarse
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    <script src="{{ asset('js/jQuery-2.1.4.min.js') }}"></script>
+    <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('js/app.min.js') }}"></script>
 </body>
 </html>
