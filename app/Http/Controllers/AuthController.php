@@ -32,21 +32,35 @@ class AuthController extends Controller
     }
 
     // ==============================
-    // Logout
+    // Recuperar / Reestablecer Contraseña
     // ==============================
-    public function logout(Request $request) {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+    public function recuperarContrasena()
+    {
+        return view('auth.recuperarcontrasena');
+    }
 
-        return redirect()->route('login')->with('success', 'Sesión cerrada exitosamente.');
+    public function reestablecerContrasena()
+    {
+        return view('auth.reestablecercontrasena');
+    }
+
+    public function actualizarContrasena(Request $request)
+    {
+        $request->validate([
+            'token' => 'required',
+            'password' => 'required|confirmed|min:8',
+        ]);
+
+        return redirect()->route('login')->with('success', 'Contraseña actualizada correctamente.');
     }
 
     // ==============================
-    // Registro general
+    // Registro
     // ==============================
-    public function register() {
-        $roles = Rol::whereIn('id_rol', [3,4])->get();
+    public function register()
+    {
+        // Solo por si usas roles en la tabla
+        $roles = Rol::whereIn('id_rol', [3, 4])->get();
 
         if ($roles->isEmpty()) {
             $roles = collect([
@@ -58,30 +72,36 @@ class AuthController extends Controller
         return view('auth.register', ['roles' => $roles]);
     }
 
-    public function registerStore(Request $request) {
+    public function registerStore(Request $request)
+    {
+        // Validación simple, basada en tu formulario
         $request->validate([
             'username' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255',
+            'email' => 'nullable|email|max:255', // opcional si tu tabla no lo usa
             'password' => 'required|confirmed|min:6',
         ]);
 
+        // Crear usuario
         $user = User::create([
             'nombre_usuario' => $request->username,
             'clave' => Hash::make($request->password),
-            'id_rol' => 3,
+            'id_rol' => 3, // puedes ajustar según el tipo de usuario
             'id_estado' => 1,
         ]);
 
+        // Iniciar sesión automáticamente
         Auth::login($user);
 
-        return redirect()->route('dashboard.estudiante')->with('success', 'Registro exitoso. ¡Bienvenido!');
+        return redirect()->route('dashboard.estudiante')
+            ->with('success', 'Registro exitoso. ¡Bienvenido!');
     }
 
     // ==============================
-    // Registro de estudiantes (cursos vacacionales)
+    // Inicio de Sesión
     // ==============================
-    public function showRegistroEstudiante() {
-        return view('auth.registro'); // resources/views/registro.blade.php
+    public function login()
+    {
+        return view('auth.login');
     }
 
     public function registrarEstudiante(Request $request) {
