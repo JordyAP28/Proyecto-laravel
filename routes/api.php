@@ -25,6 +25,13 @@ Route::get('/test', function () {
     return response()->json(['message' => 'API funcionando correctamente']);
 });
 
+
+Route::get('/ping', function () {
+    return response()->json(['message' => 'API está viva']);
+});
+
+
+
 // Rutas tipo recurso (CRUD automático)
 Route::apiResource('usuarios', UsuarioController::class);
 Route::apiResource('roles', RolController::class);
