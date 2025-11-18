@@ -3,140 +3,97 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
-use App\Http\Requests\ClubFormRequest;
 use App\Models\Club;
-use App\Models\Estado;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class ClubController extends Controller
 {
-
-    // Lista todos los clubes con búsqueda
-    public function index(Request $request)
+    /**
+     * Lista todos los clubes
+     */
+    public function index(): JsonResponse
     {
-        $query = trim($request->get('searchText', ''));
-
         $clubes = Club::with(['estado'])
-            ->where(function($q) use ($query) {
-                $q->where('nombre', 'LIKE', '%' . $query . '%')
-                  ->orWhere('representante', 'LIKE', '%' . $query . '%')
-                  ->orWhere('telefono', 'LIKE', '%' . $query . '%');
-            })
             ->orderBy('nombre', 'asc')
             ->paginate(10);
 
-        return view('clubes.index', [
-            'clubes' => $clubes,
-            'searchText' => $query
+        return response()->json([
+            'success' => true,
+            'data' => $clubes
         ]);
     }
 
-    // Muestra el formulario para crear un club
-    public function create()
+    /**
+     * Crear un nuevo club
+     */
+    public function store(Request $request): JsonResponse
     {
-        $estados = Estado::all();
-
-        return view('clubes.create', ['estados' => $estados]);
-    }
-
-    // Guarda un nuevo club
-    public function store(ClubFormRequest $request)
-    {
-        Club::create([
-            'nombre' => $request->nombre,
-            'representante' => $request->representante,
-            'telefono' => $request->telefono,
-            'fecha_creacion' => $request->fecha_creacion,
-            'id_estado' => $request->id_estado ?? 1, // Activo por defecto
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'representante' => 'required|string|max:255',
+            'telefono' => 'required|string|max:20',
+            'fecha_creacion' => 'required|date',
+            'id_estado' => 'nullable|exists:estados,id_estado',
         ]);
 
-        return Redirect::to('clubes')
-            ->with('success', 'Club creado exitosamente');
+        // Asignar estado activo por defecto si no se proporciona
+        $validated['id_estado'] = $validated['id_estado'] ?? 1;
+
+        $club = Club::create($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Club creado exitosamente',
+            'data' => $club->load('estado')
+        ], 201);
     }
 
-    // Muestra los detalles de un club
-    public function show($id)
+    /**
+     * Muestra un club específico
+     */
+    public function show(Club $club): JsonResponse
     {
-        $club = Club::with(['estado', 'jugadorClubs.deportista', 'clubCampeonatos.campeonato'])
-            ->findOrFail($id);
+        $club->load(['estado']);
 
-        // Obtener solo jugadores activos
-        $jugadoresActivos = $club->jugadorClubs()->where('activo', true)->count();
-
-        return view('clubes.show', [
-            'club' => $club,
-            'jugadoresActivos' => $jugadoresActivos
-        ]);
-    }
-
-    // Muestra el formulario para editar un club
-    public function edit($id)
-    {
-        $club = Club::with(['estado'])->findOrFail($id);
-        $estados = Estado::all();
-
-        return view('clubes.edit', [
-            'club' => $club,
-            'estados' => $estados
+        return response()->json([
+            'success' => true,
+            'data' => $club
         ]);
     }
 
-    // Actualiza un club
-    public function update(ClubFormRequest $request, $id)
+    /**
+     * Actualizar un club
+     */
+    public function update(Request $request, Club $club): JsonResponse
     {
-        $club = Club::findOrFail($id);
-
-        $club->update([
-            'nombre' => $request->nombre,
-            'representante' => $request->representante,
-            'telefono' => $request->telefono,
-            'fecha_creacion' => $request->fecha_creacion,
-            'id_estado' => $request->id_estado,
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'representante' => 'required|string|max:255',
+            'telefono' => 'required|string|max:20',
+            'fecha_creacion' => 'required|date',
+            'id_estado' => 'required|exists:estados,id_estado',
         ]);
 
-        return Redirect::to('clubes')
-            ->with('success', 'Club actualizado exitosamente');
+        $club->update($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Club actualizado exitosamente',
+            'data' => $club->fresh(['estado'])
+        ]);
     }
 
-    // Desactiva un club (cambia estado a inactivo)
-    public function destroy($id)
+    /**
+     * Eliminar un club
+     */
+    public function destroy(Club $club): JsonResponse
     {
-        $club = Club::findOrFail($id);
+        $club->delete();
 
-        // Cambiar a estado inactivo (id_estado = 2)
-        $club->update(['id_estado' => 2]);
-
-        return Redirect::to('clubes')
-            ->with('success', 'Club desactivado exitosamente');
-    }
-
-    // Método adicional: Activar club
-    public function activar($id)
-    {
-        $club = Club::findOrFail($id);
-
-        $club->update(['id_estado' => 1]);
-
-        return Redirect::to('clubes')
-            ->with('success', 'Club activado exitosamente');
-    }
-
-    // Método adicional: Ver jugadores del club
-    public function jugadores($id)
-    {
-        $club = Club::with(['jugadorClubs.deportista'])
-            ->findOrFail($id);
-
-        $jugadoresActivos = $club->jugadorClubs()
-            ->where('activo', true)
-            ->with('deportista')
-            ->orderBy('fecha_ingreso', 'desc')
-            ->get();
-
-        return view('clubes.jugadores', [
-            'club' => $club,
-            'jugadores' => $jugadoresActivos
+        return response()->json([
+            'success' => true,
+            'message' => 'Club eliminado exitosamente'
         ]);
     }
 }

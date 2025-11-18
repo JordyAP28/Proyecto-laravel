@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Rol;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class RolController extends Controller
 {
-    // Lista todos los roles disponibles
-    public function index()
+    /**
+     * Lista todos los roles
+     */
+    public function index(): JsonResponse
     {
-        $roles = Rol::withCount('users')->get();
+        $roles = Rol::all();
 
         return response()->json([
             'success' => true,
@@ -20,24 +22,16 @@ class RolController extends Controller
         ]);
     }
 
-    // Crear un nuevo rol
-    public function store(Request $request)
+    /**
+     * Crear un nuevo rol
+     */
+    public function store(Request $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'rol' => 'required|in:Administrador,Entrenador,Deportista,Secretaria|unique:roles,rol',
+        $validated = $request->validate([
+            'rol' => 'required|string|in:Administrador,Entrenador,Deportista,Secretaria|unique:roles,rol',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error de validación',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        $rol = Rol::create([
-            'rol' => $request->rol
-        ]);
+        $rol = Rol::create($validated);
 
         return response()->json([
             'success' => true,
@@ -46,78 +40,45 @@ class RolController extends Controller
         ], 201);
     }
 
-    // Muestra un rol específico
-    public function show($id)
+    /**
+     * Muestra un rol específico
+     */
+    public function show(Rol $rol): JsonResponse
     {
-        $rol = Rol::withCount('users')->findOrFail($id);
-
         return response()->json([
             'success' => true,
             'data' => $rol
         ]);
     }
 
-    // Actualizar un rol
-    public function update(Request $request, $id)
+    /**
+     * Actualizar un rol
+     */
+    public function update(Request $request, Rol $rol): JsonResponse
     {
-        $rol = Rol::findOrFail($id);
-
-        $validator = Validator::make($request->all(), [
-            'rol' => 'required|in:Administrador,Entrenador,Deportista,Secretaria|unique:roles,rol,' . $id . ',id_rol',
+        $validated = $request->validate([
+            'rol' => 'required|string|in:Administrador,Entrenador,Deportista,Secretaria|unique:roles,rol,' . $rol->id_rol . ',id_rol',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error de validación',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        $rol->update([
-            'rol' => $request->rol
-        ]);
+        $rol->update($validated);
 
         return response()->json([
             'success' => true,
             'message' => 'Rol actualizado exitosamente',
-            'data' => $rol
+            'data' => $rol->fresh()
         ]);
     }
 
-    // Eliminar un rol
-    public function destroy($id)
+    /**
+     * Eliminar un rol
+     */
+    public function destroy(Rol $rol): JsonResponse
     {
-        $rol = Rol::findOrFail($id);
-
-        // Verificar si hay usuarios con este rol
-        if ($rol->users()->count() > 0) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No se puede eliminar: existen usuarios asignados a este rol'
-            ], 400);
-        }
-
         $rol->delete();
 
         return response()->json([
             'success' => true,
             'message' => 'Rol eliminado exitosamente'
-        ]);
-    }
-
-    // Obtener usuarios por rol
-    public function usuarios($id)
-    {
-        $rol = Rol::with('users.estado')->findOrFail($id);
-
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'rol' => $rol,
-                'total_usuarios' => $rol->users->count(),
-                'usuarios' => $rol->users
-            ]
         ]);
     }
 }

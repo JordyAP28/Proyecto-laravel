@@ -33,19 +33,19 @@ Route::get('/ping', function () {
 
 
 // Rutas tipo recurso (CRUD automático)
-Route::apiResource('usuarios', UsuarioController::class);
-Route::apiResource('roles', RolController::class);
-Route::apiResource('estados', EstadoController::class);
-Route::apiResource('logs', LogSistemaController::class);
-Route::apiResource('cursos', CursoController::class);
-Route::apiResource('inscripciones', InscripcionCursoController::class);
-Route::apiResource('deportistas', DeportistaController::class);
-Route::apiResource('clubes', ClubController::class);
-Route::apiResource('jugador_clubes', JugadorClubController::class);
-Route::apiResource('campeonatos', CampeonatoController::class);
-Route::apiResource('club_campeonatos', ClubCampeonatoController::class);
-Route::apiResource('escenarios', EscenarioController::class);
 Route::apiResource('actividades', ActividadController::class);
-Route::apiResource('programa_actividades', ProgramaActividadController::class);
+Route::apiResource('campeonatos', CampeonatoController::class);
+Route::apiResource('club-campeonatos', ClubCampeonatoController::class);
+Route::apiResource('clubes', ClubController::class);
+Route::apiResource('cursos', CursoController::class);
+Route::apiResource('deportistas', DeportistaController::class);
+Route::apiResource('detalle-facturas', DetalleFacturaController::class);
+Route::apiResource('escenarios', EscenarioController::class);
+Route::apiResource('estados', EstadoController::class);
 Route::apiResource('facturas', FacturaController::class);
-Route::apiResource('detalle_facturas', DetalleFacturaController::class);
+Route::apiResource('inscripcion-cursos', InscripcionCursoController::class);
+Route::apiResource('jugador-clubes', JugadorClubController::class);
+Route::apiResource('log-sistemas', LogSistemaController::class);
+Route::apiResource('programa-actividades', ProgramaActividadController::class);
+Route::apiResource('roles', RolController::class);
+Route::apiResource('usuarios', UsuarioController::class);

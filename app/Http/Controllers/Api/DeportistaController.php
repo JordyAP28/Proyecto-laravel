@@ -2,25 +2,19 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\DeportistaFormRequest;
 use App\Models\Deportista;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class DeportistaController extends Controller
 {
-    // Lista todos los deportistas con búsqueda
-    public function index(Request $request)
+    /**
+     * Lista todos los deportistas
+     */
+    public function index(): JsonResponse
     {
-        $query = trim($request->get('searchText', ''));
-
-        $deportistas = Deportista::where(function($q) use ($query) {
-                $q->where('nombre', 'LIKE', '%' . $query . '%')
-                  ->orWhere('apellido', 'LIKE', '%' . $query . '%')
-                  ->orWhere('cedula', 'LIKE', '%' . $query . '%')
-                  ->orWhere('correo', 'LIKE', '%' . $query . '%');
-            })
-            ->orderBy('apellido', 'asc')
+        $deportistas = Deportista::orderBy('apellido', 'asc')
             ->orderBy('nombre', 'asc')
             ->paginate(10);
 
@@ -30,38 +24,22 @@ class DeportistaController extends Controller
         ]);
     }
 
-    // Muestra el formulario para crear un deportista (devuelve estructura vacía)
-    public function create()
+    /**
+     * Crear un nuevo deportista
+     */
+    public function store(Request $request): JsonResponse
     {
-        return response()->json([
-            'success' => true,
-            'message' => 'Formulario para crear deportista',
-            'data' => [
-                'fields' => [
-                    'cedula' => 'required|string',
-                    'nombre' => 'required|string',
-                    'apellido' => 'required|string',
-                    'correo' => 'required|email',
-                    'telefono' => 'nullable|string',
-                    'direccion' => 'nullable|string',
-                    'fecha_nacimiento' => 'required|date'
-                ]
-            ]
+        $validated = $request->validate([
+            'cedula' => 'required|string|unique:deportistas,cedula|max:20',
+            'nombre' => 'required|string|max:255',
+            'apellido' => 'required|string|max:255',
+            'correo' => 'required|email|unique:deportistas,correo|max:255',
+            'telefono' => 'nullable|string|max:20',
+            'direccion' => 'nullable|string|max:500',
+            'fecha_nacimiento' => 'required|date',
         ]);
-    }
 
-    // Guarda un nuevo deportista
-    public function store(DeportistaFormRequest $request)
-    {
-        $deportista = Deportista::create([
-            'cedula' => $request->cedula,
-            'nombre' => $request->nombre,
-            'apellido' => $request->apellido,
-            'correo' => $request->correo,
-            'telefono' => $request->telefono,
-            'direccion' => $request->direccion,
-            'fecha_nacimiento' => $request->fecha_nacimiento,
-        ]);
+        $deportista = Deportista::create($validated);
 
         return response()->json([
             'success' => true,
@@ -70,74 +48,46 @@ class DeportistaController extends Controller
         ], 201);
     }
 
-    // Muestra los detalles de un deportista
-    public function show($id)
+    /**
+     * Muestra un deportista específico
+     */
+    public function show(Deportista $deportista): JsonResponse
     {
-        $deportista = Deportista::with(['jugadorClubs.club', 'inscripciones.curso'])
-            ->findOrFail($id);
-
         return response()->json([
             'success' => true,
             'data' => $deportista
         ]);
     }
 
-    // Muestra el formulario para editar un deportista
-    public function edit($id)
+    /**
+     * Actualizar un deportista
+     */
+    public function update(Request $request, Deportista $deportista): JsonResponse
     {
-        $deportista = Deportista::findOrFail($id);
-
-        return response()->json([
-            'success' => true,
-            'data' => $deportista
+        $validated = $request->validate([
+            'cedula' => 'required|string|max:20|unique:deportistas,cedula,' . $deportista->id_deportista . ',id_deportista',
+            'nombre' => 'required|string|max:255',
+            'apellido' => 'required|string|max:255',
+            'correo' => 'required|email|max:255|unique:deportistas,correo,' . $deportista->id_deportista . ',id_deportista',
+            'telefono' => 'nullable|string|max:20',
+            'direccion' => 'nullable|string|max:500',
+            'fecha_nacimiento' => 'required|date',
         ]);
-    }
 
-    // Actualiza un deportista
-    public function update(DeportistaFormRequest $request, $id)
-    {
-        $deportista = Deportista::findOrFail($id);
-
-        $deportista->update([
-            'cedula' => $request->cedula,
-            'nombre' => $request->nombre,
-            'apellido' => $request->apellido,
-            'correo' => $request->correo,
-            'telefono' => $request->telefono,
-            'direccion' => $request->direccion,
-            'fecha_nacimiento' => $request->fecha_nacimiento,
-        ]);
+        $deportista->update($validated);
 
         return response()->json([
             'success' => true,
             'message' => 'Deportista actualizado exitosamente',
-            'data' => $deportista
+            'data' => $deportista->fresh()
         ]);
     }
 
-    // Elimina un deportista
-    public function destroy($id)
+    /**
+     * Eliminar un deportista
+     */
+    public function destroy(Deportista $deportista): JsonResponse
     {
-        $deportista = Deportista::findOrFail($id);
-
-        // Verificar si tiene relaciones activas
-        $tieneClubActivo = $deportista->jugadorClubs()->where('activo', true)->exists();
-        $tieneInscripciones = $deportista->inscripciones()->exists();
-
-        if ($tieneClubActivo) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No se puede eliminar: el deportista está asignado a un club activo'
-            ], 400);
-        }
-
-        if ($tieneInscripciones) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No se puede eliminar: el deportista tiene inscripciones registradas'
-            ], 400);
-        }
-
         $deportista->delete();
 
         return response()->json([

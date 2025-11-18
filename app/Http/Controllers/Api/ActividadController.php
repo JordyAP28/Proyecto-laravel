@@ -2,29 +2,19 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Actividad;
-use Illuminate\Support\Facades\Validator;
-use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class ActividadController extends Controller
 {
-    // Lista todas las actividades con búsqueda y filtros
-    public function index(Request $request)
+    /**
+     * Lista todas las actividades
+     */
+    public function index(): JsonResponse
     {
-        $query = trim($request->get('searchText', ''));
-        $fecha = $request->get('fecha');
-
-        $actividades = Actividad::withCount('programaActividades')
-            ->when($query, function($q) use ($query) {
-                $q->where('nombre_actividad', 'LIKE', '%' . $query . '%')
-                  ->orWhere('descripcion', 'LIKE', '%' . $query . '%');
-            })
-            ->when($fecha, function($q) use ($fecha) {
-                $q->whereDate('fecha', $fecha);
-            })
-            ->orderBy('fecha', 'desc')
+        $actividades = Actividad::orderBy('fecha', 'desc')
             ->orderBy('hora_inicio', 'asc')
             ->paginate(10);
 
@@ -34,10 +24,12 @@ class ActividadController extends Controller
         ]);
     }
 
-    // Crear una nueva actividad
-    public function store(Request $request)
+    /**
+     * Crear una nueva actividad
+     */
+    public function store(Request $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
+        $validated = $request->validate([
             'nombre_actividad' => 'required|string|max:255',
             'descripcion' => 'required|string',
             'fecha' => 'required|date',
@@ -45,21 +37,7 @@ class ActividadController extends Controller
             'hora_fin' => 'required|date_format:H:i|after:hora_inicio',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error de validación',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        $actividad = Actividad::create([
-            'nombre_actividad' => $request->nombre_actividad,
-            'descripcion' => $request->descripcion,
-            'fecha' => $request->fecha,
-            'hora_inicio' => $request->hora_inicio,
-            'hora_fin' => $request->hora_fin,
-        ]);
+        $actividad = Actividad::create($validated);
 
         return response()->json([
             'success' => true,
@@ -68,25 +46,23 @@ class ActividadController extends Controller
         ], 201);
     }
 
-    // Muestra detalles de una actividad
-    public function show($id)
+    /**
+     * Muestra una actividad específica
+     */
+    public function show(Actividad $actividad): JsonResponse
     {
-        $actividad = Actividad::with(['programaActividades.escenario'])
-            ->withCount('programaActividades')
-            ->findOrFail($id);
-
         return response()->json([
             'success' => true,
             'data' => $actividad
         ]);
     }
 
-    // Actualizar una actividad
-    public function update(Request $request, $id)
+    /**
+     * Actualizar una actividad
+     */
+    public function update(Request $request, Actividad $actividad): JsonResponse
     {
-        $actividad = Actividad::findOrFail($id);
-
-        $validator = Validator::make($request->all(), [
+        $validated = $request->validate([
             'nombre_actividad' => 'required|string|max:255',
             'descripcion' => 'required|string',
             'fecha' => 'required|date',
@@ -94,131 +70,25 @@ class ActividadController extends Controller
             'hora_fin' => 'required|date_format:H:i|after:hora_inicio',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error de validación',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        $actividad->update([
-            'nombre_actividad' => $request->nombre_actividad,
-            'descripcion' => $request->descripcion,
-            'fecha' => $request->fecha,
-            'hora_inicio' => $request->hora_inicio,
-            'hora_fin' => $request->hora_fin,
-        ]);
+        $actividad->update($validated);
 
         return response()->json([
             'success' => true,
             'message' => 'Actividad actualizada exitosamente',
-            'data' => $actividad
+            'data' => $actividad->fresh()
         ]);
     }
 
-    // Eliminar una actividad
-    public function destroy($id)
+    /**
+     * Eliminar una actividad
+     */
+    public function destroy(Actividad $actividad): JsonResponse
     {
-        $actividad = Actividad::findOrFail($id);
-
-        // Verificar si está asignada a escenarios
-        if ($actividad->programaActividades()->count() > 0) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No se puede eliminar: la actividad está asignada a escenarios'
-            ], 400);
-        }
-
         $actividad->delete();
 
         return response()->json([
             'success' => true,
             'message' => 'Actividad eliminada exitosamente'
-        ]);
-    }
-
-    // Actividades de hoy
-    public function hoy()
-    {
-        $actividades = Actividad::with(['programaActividades.escenario'])
-            ->whereDate('fecha', Carbon::today())
-            ->orderBy('hora_inicio')
-            ->get();
-
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'fecha' => Carbon::today()->format('Y-m-d'),
-                'total_actividades' => $actividades->count(),
-                'actividades' => $actividades
-            ]
-        ]);
-    }
-
-    // Actividades por rango de fechas
-    public function porFecha(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'fecha_desde' => 'required|date',
-            'fecha_hasta' => 'required|date|after_or_equal:fecha_desde',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error de validación',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        $actividades = Actividad::with(['programaActividades.escenario'])
-            ->whereDate('fecha', '>=', $request->fecha_desde)
-            ->whereDate('fecha', '<=', $request->fecha_hasta)
-            ->orderBy('fecha')
-            ->orderBy('hora_inicio')
-            ->get();
-
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'fecha_desde' => $request->fecha_desde,
-                'fecha_hasta' => $request->fecha_hasta,
-                'total_actividades' => $actividades->count(),
-                'actividades' => $actividades
-            ]
-        ]);
-    }
-
-    // Actividades próximas
-    public function proximas()
-    {
-        $actividades = Actividad::with(['programaActividades.escenario'])
-            ->where('fecha', '>=', Carbon::today())
-            ->orderBy('fecha')
-            ->orderBy('hora_inicio')
-            ->limit(20)
-            ->get();
-
-        return response()->json([
-            'success' => true,
-            'data' => $actividades
-        ]);
-    }
-
-    // Escenarios asignados a una actividad
-    public function escenarios($id)
-    {
-        $actividad = Actividad::with(['programaActividades.escenario'])
-            ->findOrFail($id);
-
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'actividad' => $actividad->only(['id_actividad', 'nombre_actividad', 'fecha', 'hora_inicio', 'hora_fin']),
-                'total_escenarios' => $actividad->programaActividades->count(),
-                'escenarios_asignados' => $actividad->programaActividades
-            ]
         ]);
     }
 }

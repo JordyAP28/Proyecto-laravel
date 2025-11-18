@@ -2,29 +2,19 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\JugadorClub;
-use App\Models\Deportista;
-use App\Models\Club;
-use App\Http\Requests\JugadorClubFormRequest;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class JugadorClubController extends Controller
 {
-    // Lista todos los jugadores asignados a clubes
-    public function index(Request $request)
+    /**
+     * Lista todos los jugadores asignados a clubes
+     */
+    public function index(): JsonResponse
     {
-        $query = trim($request->get('searchText', ''));
-
         $jugadores = JugadorClub::with(['deportista', 'club'])
-            ->whereHas('deportista', function($q) use ($query) {
-                $q->where('nombre', 'LIKE', '%' . $query . '%')
-                  ->orWhere('apellido', 'LIKE', '%' . $query . '%')
-                  ->orWhere('cedula', 'LIKE', '%' . $query . '%');
-            })
-            ->orWhereHas('club', function($q) use ($query) {
-                $q->where('nombre', 'LIKE', '%' . $query . '%');
-            })
             ->orderBy('fecha_ingreso', 'desc')
             ->paginate(10);
 
@@ -34,37 +24,22 @@ class JugadorClubController extends Controller
         ]);
     }
 
-    // Muestra formulario para asignar un deportista a un club
-    public function create()
+    /**
+     * Asignar un deportista a un club
+     */
+    public function store(Request $request): JsonResponse
     {
-        // Solo deportistas que NO tienen club activo
-        $deportistas = Deportista::whereDoesntHave('jugadorClubs', function($q) {
-            $q->where('activo', true);
-        })->orderBy('nombre')->get();
-
-        // Solo clubes activos
-        $clubes = Club::where('id_estado', 1)
-            ->orderBy('nombre')
-            ->get();
-
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'deportistas' => $deportistas,
-                'clubes' => $clubes
-            ]
+        $validated = $request->validate([
+            'id_deportista' => 'required|exists:deportistas,id_deportista',
+            'id_club' => 'required|exists:clubes,id_club',
+            'fecha_ingreso' => 'required|date',
+            'activo' => 'nullable|boolean',
         ]);
-    }
 
-    // Asigna un deportista a un club
-    public function store(JugadorClubFormRequest $request)
-    {
-        $jugador = JugadorClub::create([
-            'id_deportista' => $request->id_deportista,
-            'id_club' => $request->id_club,
-            'fecha_ingreso' => $request->fecha_ingreso,
-            'activo' => true,
-        ]);
+        // Asignar activo como true por defecto
+        $validated['activo'] = $validated['activo'] ?? true;
+
+        $jugador = JugadorClub::create($validated);
 
         return response()->json([
             'success' => true,
@@ -73,104 +48,50 @@ class JugadorClubController extends Controller
         ], 201);
     }
 
-    // Muestra detalles de la asignación
-    public function show($id)
+    /**
+     * Muestra una asignación específica
+     */
+    public function show(JugadorClub $jugadorClub): JsonResponse
     {
-        $jugador = JugadorClub::with(['deportista', 'club.estado'])->findOrFail($id);
+        $jugadorClub->load(['deportista', 'club']);
 
         return response()->json([
             'success' => true,
-            'data' => $jugador
+            'data' => $jugadorClub
         ]);
     }
 
-    // Muestra formulario para cambiar de club
-    public function edit($id)
+    /**
+     * Actualizar una asignación
+     */
+    public function update(Request $request, JugadorClub $jugadorClub): JsonResponse
     {
-        $jugador = JugadorClub::with(['deportista', 'club'])->findOrFail($id);
-        
-        // Solo clubes activos diferentes al actual
-        $clubes = Club::where('id_estado', 1)
-            ->where('id_club', '!=', $jugador->id_club)
-            ->orderBy('nombre')
-            ->get();
+        $validated = $request->validate([
+            'id_deportista' => 'required|exists:deportistas,id_deportista',
+            'id_club' => 'required|exists:clubes,id_club',
+            'fecha_ingreso' => 'required|date',
+            'activo' => 'required|boolean',
+        ]);
+
+        $jugadorClub->update($validated);
 
         return response()->json([
             'success' => true,
-            'data' => [
-                'jugador' => $jugador,
-                'clubes' => $clubes
-            ]
+            'message' => 'Asignación actualizada exitosamente',
+            'data' => $jugadorClub->fresh(['deportista', 'club'])
         ]);
     }
 
-    // Cambia el club del deportista
-    public function update(JugadorClubFormRequest $request, $id)
+    /**
+     * Eliminar una asignación
+     */
+    public function destroy(JugadorClub $jugadorClub): JsonResponse
     {
-        $jugador = JugadorClub::findOrFail($id);
-
-        $jugador->update([
-            'id_club' => $request->id_club,
-            'fecha_ingreso' => $request->fecha_ingreso,
-        ]);
+        $jugadorClub->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'Club actualizado exitosamente',
-            'data' => $jugador->load(['deportista', 'club'])
-        ]);
-    }
-
-    // Desactiva la asignación (el deportista deja el club)
-    public function destroy($id)
-    {
-        $jugador = JugadorClub::findOrFail($id);
-
-        $jugador->update(['activo' => false]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Deportista retirado del club exitosamente',
-            'data' => $jugador
-        ]);
-    }
-
-    // Historial de clubes de un deportista específico
-    public function historial($id_deportista)
-    {
-        $deportista = Deportista::findOrFail($id_deportista);
-        
-        $historial = JugadorClub::with(['club'])
-            ->where('id_deportista', $id_deportista)
-            ->orderBy('fecha_ingreso', 'desc')
-            ->get();
-
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'deportista' => $deportista,
-                'historial' => $historial
-            ]
-        ]);
-    }
-
-    // Lista de jugadores de un club específico
-    public function jugadoresPorClub($id_club)
-    {
-        $club = Club::findOrFail($id_club);
-        
-        $jugadores = JugadorClub::with(['deportista'])
-            ->where('id_club', $id_club)
-            ->where('activo', true)
-            ->orderBy('fecha_ingreso', 'desc')
-            ->get();
-
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'club' => $club,
-                'jugadores' => $jugadores
-            ]
+            'message' => 'Asignación eliminada exitosamente'
         ]);
     }
 }
