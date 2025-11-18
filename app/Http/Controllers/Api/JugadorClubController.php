@@ -1,23 +1,16 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
+use App\Http\Controllers\Controller;
 use App\Models\JugadorClub;
 use App\Models\Deportista;
 use App\Models\Club;
 use App\Http\Requests\JugadorClubFormRequest;
-use Illuminate\Routing\Controllers\HasMiddleware;
-use Illuminate\Routing\Controllers\Middleware;
 
-class JugadorClubController extends Controller implements HasMiddleware
+class JugadorClubController extends Controller
 {
-    public static function middleware(): array
-    {
-        return ['auth'];
-    }
-
     // Lista todos los jugadores asignados a clubes
     public function index(Request $request)
     {
@@ -35,9 +28,9 @@ class JugadorClubController extends Controller implements HasMiddleware
             ->orderBy('fecha_ingreso', 'desc')
             ->paginate(10);
 
-        return view('jugador-club.index', [
-            'jugadores' => $jugadores,
-            'searchText' => $query
+        return response()->json([
+            'success' => true,
+            'data' => $jugadores
         ]);
     }
 
@@ -54,24 +47,30 @@ class JugadorClubController extends Controller implements HasMiddleware
             ->orderBy('nombre')
             ->get();
 
-        return view('jugador-club.create', [
-            'deportistas' => $deportistas,
-            'clubes' => $clubes
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'deportistas' => $deportistas,
+                'clubes' => $clubes
+            ]
         ]);
     }
 
     // Asigna un deportista a un club
     public function store(JugadorClubFormRequest $request)
     {
-        JugadorClub::create([
+        $jugador = JugadorClub::create([
             'id_deportista' => $request->id_deportista,
             'id_club' => $request->id_club,
             'fecha_ingreso' => $request->fecha_ingreso,
             'activo' => true,
         ]);
 
-        return Redirect::to('jugador-club')
-            ->with('success', 'Deportista asignado al club exitosamente');
+        return response()->json([
+            'success' => true,
+            'message' => 'Deportista asignado al club exitosamente',
+            'data' => $jugador->load(['deportista', 'club'])
+        ], 201);
     }
 
     // Muestra detalles de la asignación
@@ -79,7 +78,10 @@ class JugadorClubController extends Controller implements HasMiddleware
     {
         $jugador = JugadorClub::with(['deportista', 'club.estado'])->findOrFail($id);
 
-        return view('jugador-club.show', ['jugador' => $jugador]);
+        return response()->json([
+            'success' => true,
+            'data' => $jugador
+        ]);
     }
 
     // Muestra formulario para cambiar de club
@@ -93,9 +95,12 @@ class JugadorClubController extends Controller implements HasMiddleware
             ->orderBy('nombre')
             ->get();
 
-        return view('jugador-club.edit', [
-            'jugador' => $jugador,
-            'clubes' => $clubes
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'jugador' => $jugador,
+                'clubes' => $clubes
+            ]
         ]);
     }
 
@@ -109,8 +114,11 @@ class JugadorClubController extends Controller implements HasMiddleware
             'fecha_ingreso' => $request->fecha_ingreso,
         ]);
 
-        return Redirect::to('jugador-club')
-            ->with('success', 'Club actualizado exitosamente');
+        return response()->json([
+            'success' => true,
+            'message' => 'Club actualizado exitosamente',
+            'data' => $jugador->load(['deportista', 'club'])
+        ]);
     }
 
     // Desactiva la asignación (el deportista deja el club)
@@ -120,8 +128,11 @@ class JugadorClubController extends Controller implements HasMiddleware
 
         $jugador->update(['activo' => false]);
 
-        return Redirect::to('jugador-club')
-            ->with('success', 'Deportista retirado del club exitosamente');
+        return response()->json([
+            'success' => true,
+            'message' => 'Deportista retirado del club exitosamente',
+            'data' => $jugador
+        ]);
     }
 
     // Historial de clubes de un deportista específico
@@ -134,9 +145,12 @@ class JugadorClubController extends Controller implements HasMiddleware
             ->orderBy('fecha_ingreso', 'desc')
             ->get();
 
-        return view('jugador-club.historial', [
-            'deportista' => $deportista,
-            'historial' => $historial
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'deportista' => $deportista,
+                'historial' => $historial
+            ]
         ]);
     }
 
@@ -151,9 +165,12 @@ class JugadorClubController extends Controller implements HasMiddleware
             ->orderBy('fecha_ingreso', 'desc')
             ->get();
 
-        return view('jugador-club.por-club', [
-            'club' => $club,
-            'jugadores' => $jugadores
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'club' => $club,
+                'jugadores' => $jugadores
+            ]
         ]);
     }
 }

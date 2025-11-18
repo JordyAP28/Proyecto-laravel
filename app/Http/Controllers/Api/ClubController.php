@@ -1,21 +1,16 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\ClubFormRequest;
 use App\Models\Club;
 use App\Models\Estado;
-use Illuminate\Routing\Controllers\HasMiddleware;
-use Illuminate\Routing\Controllers\Middleware;
 
-class ClubController extends Controller implements HasMiddleware
+class ClubController extends Controller
 {
-    public static function middleware(): array
-    {
-        return ['auth'];
-    }
 
     // Lista todos los clubes con búsqueda
     public function index(Request $request)
