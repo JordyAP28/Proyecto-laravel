@@ -1,21 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\DeportistaFormRequest;
 use App\Models\Deportista;
-use Illuminate\Routing\Controllers\HasMiddleware;
-use Illuminate\Routing\Controllers\Middleware;
 
-class DeportistaController extends Controller implements HasMiddleware
+class DeportistaController extends Controller
 {
-    public static function middleware(): array
-    {
-        return ['auth'];
-    }
-
     // Lista todos los deportistas con búsqueda
     public function index(Request $request)
     {
@@ -31,22 +24,36 @@ class DeportistaController extends Controller implements HasMiddleware
             ->orderBy('nombre', 'asc')
             ->paginate(10);
 
-        return view('deportistas.index', [
-            'deportistas' => $deportistas,
-            'searchText' => $query
+        return response()->json([
+            'success' => true,
+            'data' => $deportistas
         ]);
     }
 
-    // Muestra el formulario para crear un deportista
+    // Muestra el formulario para crear un deportista (devuelve estructura vacía)
     public function create()
     {
-        return view('deportistas.create');
+        return response()->json([
+            'success' => true,
+            'message' => 'Formulario para crear deportista',
+            'data' => [
+                'fields' => [
+                    'cedula' => 'required|string',
+                    'nombre' => 'required|string',
+                    'apellido' => 'required|string',
+                    'correo' => 'required|email',
+                    'telefono' => 'nullable|string',
+                    'direccion' => 'nullable|string',
+                    'fecha_nacimiento' => 'required|date'
+                ]
+            ]
+        ]);
     }
 
     // Guarda un nuevo deportista
     public function store(DeportistaFormRequest $request)
     {
-        Deportista::create([
+        $deportista = Deportista::create([
             'cedula' => $request->cedula,
             'nombre' => $request->nombre,
             'apellido' => $request->apellido,
@@ -56,8 +63,11 @@ class DeportistaController extends Controller implements HasMiddleware
             'fecha_nacimiento' => $request->fecha_nacimiento,
         ]);
 
-        return Redirect::to('deportistas')
-            ->with('success', 'Deportista registrado exitosamente');
+        return response()->json([
+            'success' => true,
+            'message' => 'Deportista registrado exitosamente',
+            'data' => $deportista
+        ], 201);
     }
 
     // Muestra los detalles de un deportista
@@ -66,7 +76,10 @@ class DeportistaController extends Controller implements HasMiddleware
         $deportista = Deportista::with(['jugadorClubs.club', 'inscripciones.curso'])
             ->findOrFail($id);
 
-        return view('deportistas.show', ['deportista' => $deportista]);
+        return response()->json([
+            'success' => true,
+            'data' => $deportista
+        ]);
     }
 
     // Muestra el formulario para editar un deportista
@@ -74,7 +87,10 @@ class DeportistaController extends Controller implements HasMiddleware
     {
         $deportista = Deportista::findOrFail($id);
 
-        return view('deportistas.edit', ['deportista' => $deportista]);
+        return response()->json([
+            'success' => true,
+            'data' => $deportista
+        ]);
     }
 
     // Actualiza un deportista
@@ -92,8 +108,11 @@ class DeportistaController extends Controller implements HasMiddleware
             'fecha_nacimiento' => $request->fecha_nacimiento,
         ]);
 
-        return Redirect::to('deportistas')
-            ->with('success', 'Deportista actualizado exitosamente');
+        return response()->json([
+            'success' => true,
+            'message' => 'Deportista actualizado exitosamente',
+            'data' => $deportista
+        ]);
     }
 
     // Elimina un deportista
@@ -106,20 +125,24 @@ class DeportistaController extends Controller implements HasMiddleware
         $tieneInscripciones = $deportista->inscripciones()->exists();
 
         if ($tieneClubActivo) {
-            return back()
-                ->withErrors(['error' => 'No se puede eliminar: el deportista está asignado a un club activo'])
-                ->withInput();
+            return response()->json([
+                'success' => false,
+                'message' => 'No se puede eliminar: el deportista está asignado a un club activo'
+            ], 400);
         }
 
         if ($tieneInscripciones) {
-            return back()
-                ->withErrors(['error' => 'No se puede eliminar: el deportista tiene inscripciones registradas'])
-                ->withInput();
+            return response()->json([
+                'success' => false,
+                'message' => 'No se puede eliminar: el deportista tiene inscripciones registradas'
+            ], 400);
         }
 
         $deportista->delete();
 
-        return Redirect::to('deportistas')
-            ->with('success', 'Deportista eliminado exitosamente');
+        return response()->json([
+            'success' => true,
+            'message' => 'Deportista eliminado exitosamente'
+        ]);
     }
 }

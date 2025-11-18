@@ -3,22 +3,22 @@
 use Illuminate\Support\Facades\Route;
 
 // Importar todos los controladores
-use App\Http\Controllers\UsuarioController;
-use App\Http\Controllers\RolController;
-use App\Http\Controllers\EstadoController;
-use App\Http\Controllers\LogSistemaController;
-use App\Http\Controllers\CursoController;
-use App\Http\Controllers\InscripcionCursoController;
-use App\Http\Controllers\DeportistaController;
-use App\Http\Controllers\ClubController;
-use App\Http\Controllers\JugadorClubController;
-use App\Http\Controllers\CampeonatoController;
-use App\Http\Controllers\ClubCampeonatoController;
-use App\Http\Controllers\EscenarioController;
-use App\Http\Controllers\ActividadController;
-use App\Http\Controllers\ProgramaActividadController;
-use App\Http\Controllers\FacturaController;
-use App\Http\Controllers\DetalleFacturaController;
+use App\Http\Controllers\Api\UsuarioController;
+use App\Http\Controllers\Api\RolController;
+use App\Http\Controllers\Api\EstadoController;
+use App\Http\Controllers\Api\LogSistemaController;
+use App\Http\Controllers\Api\CursoController;
+use App\Http\Controllers\Api\InscripcionCursoController;
+use App\Http\Controllers\Api\DeportistaController;
+use App\Http\Controllers\Api\ClubController;
+use App\Http\Controllers\Api\JugadorClubController;
+use App\Http\Controllers\Api\CampeonatoController;
+use App\Http\Controllers\Api\ClubCampeonatoController;
+use App\Http\Controllers\Api\EscenarioController;
+use App\Http\Controllers\Api\ActividadController;
+use App\Http\Controllers\Api\ProgramaActividadController;
+use App\Http\Controllers\Api\FacturaController;
+use App\Http\Controllers\Api\DetalleFacturaController;
 
 // Ruta de prueba para verificar que la API funciona
 Route::get('/test', function () {
