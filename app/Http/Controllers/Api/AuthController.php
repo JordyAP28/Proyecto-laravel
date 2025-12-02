@@ -38,14 +38,29 @@ class AuthController extends Controller
             $usuario = Usuario::where('email', $request->email)->first();
 
             if (!$usuario) {
+                Log::warning('Usuario no encontrado', ['email' => $request->email]);
                 return response()->json([
                     'success' => false,
                     'message' => 'Credenciales incorrectas',
                 ], 401);
             }
 
+            Log::info('Usuario encontrado', [
+                'id_usuario' => $usuario->id_usuario,
+                'email' => $usuario->email,
+                'hash_length' => strlen($usuario->clave),
+                'hash_prefix' => substr($usuario->clave, 0, 10),
+            ]);
+
             // Verificar contraseña
-            if (!Hash::check($request->password, $usuario->clave)) {
+            $passwordCorrecta = Hash::check($request->password, $usuario->clave);
+            
+            Log::info('Verificación de contraseña', [
+                'resultado' => $passwordCorrecta ? 'CORRECTA' : 'INCORRECTA',
+                'password_length' => strlen($request->password),
+            ]);
+
+            if (!$passwordCorrecta) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Credenciales incorrectas',
@@ -124,6 +139,7 @@ class AuthController extends Controller
                 ], 422);
             }
 
+            // Hashear contraseña explícitamente
             $usuario = Usuario::create([
                 'primer_nombre' => $request->primer_nombre,
                 'apellido' => $request->apellido,

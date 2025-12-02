@@ -30,12 +30,6 @@ class Usuario extends Authenticatable
         'clave'
     ];
 
-    // Hashear contraseña automáticamente al asignar "clave"
-    public function setClaveAttribute($value)
-    {
-        $this->attributes['clave'] = bcrypt($value);
-    }
-
     public function rol()
     {
         return $this->belongsTo(Rol::class, 'id_rol', 'id_rol');

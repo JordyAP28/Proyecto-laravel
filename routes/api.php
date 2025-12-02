@@ -50,11 +50,8 @@ Route::apiResource('log-sistemas', LogSistemaController::class);
 Route::apiResource('programa-actividades', ProgramaActividadController::class);
 Route::apiResource('roles', RolController::class);
 Route::apiResource('usuarios', UsuarioController::class);
-
-Route::prefix('auth')->group(function () {
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/login', [AuthController::class, 'login']);
-});
+Route::post('/register', [\App\Http\Controllers\Api\AuthController::class, 'register']);
+Route::post('/login', [\App\Http\Controllers\Api\AuthController::class, 'login']);
 
 Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLink']);
 Route::post('/reset-password',  [PasswordResetController::class, 'resetPassword']);

@@ -40,6 +40,8 @@ const Login = () => {
     setIsLoading(true);
 
     try {
+      console.log('Intentando login con:', { email }); // Debug
+      
       const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: {
@@ -52,7 +54,9 @@ const Login = () => {
         }),
       });
 
+      console.log('Respuesta del servidor:', response.status); // Debug
       const data = await response.json();
+      console.log('Datos recibidos:', data); // Debug
 
       if (response.ok && data.success) {
         // Login exitoso
