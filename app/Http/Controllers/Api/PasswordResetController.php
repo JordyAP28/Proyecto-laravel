@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Hash;
 use App\Models\Usuario;
 
 class PasswordResetController extends Controller
@@ -20,15 +21,11 @@ class PasswordResetController extends Controller
             $request->only('email')
         );
 
-        if ($status === Password::RESET_LINK_SENT) {
-            return response()->json([
-                'message' => 'Se ha enviado un enlace de recuperación a tu correo.',
-            ], 200);
-        }
-
         return response()->json([
-            'message' => 'No se pudo enviar el enlace de recuperación.',
-        ], 500);
+            'message' => $status === Password::RESET_LINK_SENT
+                ? 'Se ha enviado un enlace de recuperación a tu correo.'
+                : 'No se pudo enviar el enlace de recuperación.'
+        ], $status === Password::RESET_LINK_SENT ? 200 : 500);
     }
 
     // POST /api/reset-password
@@ -42,21 +39,18 @@ class PasswordResetController extends Controller
 
         $status = Password::broker('users')->reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
+
             function (Usuario $user, string $password) {
-                // Gracias al mutator setClaveAttribute se hashea solo
-                $user->clave = $password;
+                // 🔥 Hasheo manual SIEMPRE y garantizado
+                $user->clave = Hash::make($password);
                 $user->save();
             }
         );
 
-        if ($status === Password::PASSWORD_RESET) {
-            return response()->json([
-                'message' => 'La contraseña se ha restablecido correctamente.',
-            ], 200);
-        }
-
         return response()->json([
-            'message' => 'El token o el correo no son válidos.',
-        ], 400);
+            'message' => $status === Password::PASSWORD_RESET
+                ? 'La contraseña se ha restablecido correctamente.'
+                : 'El token o el correo no son válidos.',
+        ], $status === Password::PASSWORD_RESET ? 200 : 400);
     }
 }
