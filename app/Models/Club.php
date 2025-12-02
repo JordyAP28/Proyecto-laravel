@@ -13,6 +13,7 @@ class Club extends Model
 
     protected $table = 'clubes';
     protected $primaryKey = 'id_club';
+    public $timestamps = false;
 
     protected $fillable = [
         'fecha_creacion',

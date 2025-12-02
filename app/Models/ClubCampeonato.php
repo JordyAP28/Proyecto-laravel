@@ -12,6 +12,7 @@ class ClubCampeonato extends Model
      
    protected $table= 'club_campeonatos';
    protected $primaryKey = 'id_club_campeonato';
+   public $timestamps = false;
 
    protected $fillable = [
       'id_club',

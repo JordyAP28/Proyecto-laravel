@@ -12,6 +12,7 @@ class Deportista extends Model
 
     protected $table = 'deportistas';
     protected $primaryKey = 'id_deportista';
+    public $timestamps = false;
 
     protected $fillable = [
         'fecha_nacimiento',

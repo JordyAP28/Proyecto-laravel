@@ -13,6 +13,7 @@ class ProgramaActividad extends Model
 
     protected $table = 'programa_actividades';
     protected $primaryKey = 'id_programa_actividad';
+    public $timestamps = false;
 
     protected $fillable = [
         'id_escenario',

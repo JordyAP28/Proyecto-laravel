@@ -9,7 +9,8 @@ class Campeonato extends Model
 {
     use HasFactory;
     protected $table='campeonatos'; 
-    protected $primarykey= 'id_campeonato';
+    protected $primaryKey = 'id_campeonato';
+    public $timestamps = false;
 
     protected $fillable =[
         'nombre',

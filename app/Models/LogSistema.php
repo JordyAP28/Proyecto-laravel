@@ -9,7 +9,7 @@ class LogSistema extends Model
 {
     use HasFactory;
 
-    protected $table = 'log_sistema';
+    protected $table = 'log_sistemas';
     protected $primaryKey = 'id_log';
 
     protected $fillable = [

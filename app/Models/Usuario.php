@@ -12,7 +12,7 @@ class Usuario extends Authenticatable
 
     protected $table = 'usuarios';
     protected $primaryKey = 'id_usuario';
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $fillable = [
         'nombre_usuario',
@@ -27,8 +27,7 @@ class Usuario extends Authenticatable
     ];
 
     protected $hidden = [
-        'clave',
-        'remember_token',
+        'clave'
     ];
 
     // Hashear contraseña automáticamente al asignar "clave"

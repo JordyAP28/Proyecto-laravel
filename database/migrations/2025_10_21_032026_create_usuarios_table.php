@@ -15,8 +15,18 @@ return new class extends Migration
             $table->id('id_usuario');
             $table->foreignId('id_rol')->constrained('roles','id_rol');
             $table->foreignId('id_estado')->constrained('estados','id_estado');
+
+            // Credenciales básicas
             $table->string('nombre_usuario');
             $table->string('clave');
+
+            // Datos de estudiante/usuario
+            $table->string('primer_nombre')->nullable();
+            $table->string('apellido')->nullable();
+            $table->string('cedula')->nullable()->unique();
+            $table->string('telefono')->nullable();
+            $table->string('email')->nullable()->unique();
+
             $table->timestamps();
         });
     }

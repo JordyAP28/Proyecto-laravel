@@ -12,6 +12,7 @@ class Curso extends Model
     
     protected $table = 'cursos';
     protected $primaryKey = 'id_curso';
+    public $timestamps = false;
 
     protected $fillable = [
         'id_estado',

@@ -11,6 +11,7 @@ class JugadorClub extends Model
     use HasFactory;
     protected $table = 'jugador_clubes';
     protected $primaryKey = 'id_jugador';
+    public $timestamps = false;
 
     protected $fillable = [
         'id_deportista',

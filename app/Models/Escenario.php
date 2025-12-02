@@ -11,6 +11,7 @@ class Escenario extends Model
     use HasFactory;
     protected $table= 'escenarios';
     protected $primaryKey = 'id_escenario';
+
     protected $fillable = [
         'nombre',
         'tipo',
