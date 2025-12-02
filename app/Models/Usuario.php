@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Usuario extends Model
+class Usuario extends Authenticatable
 {
-    use HasFactory;
+    use HasFactory, Notifiable;
 
     protected $table = 'usuarios';
     protected $primaryKey = 'id_usuario';
@@ -22,12 +23,15 @@ class Usuario extends Model
         'email',
         'clave',
         'id_rol',
-        'id_estado'
+        'id_estado',
     ];
 
-    protected $hidden = ['clave'];
+    protected $hidden = [
+        'clave',
+        'remember_token',
+    ];
 
-    // Hashear contraseña automáticamente
+    // Hashear contraseña automáticamente al asignar "clave"
     public function setClaveAttribute($value)
     {
         $this->attributes['clave'] = bcrypt($value);

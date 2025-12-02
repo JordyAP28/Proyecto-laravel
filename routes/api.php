@@ -19,7 +19,7 @@ use App\Http\Controllers\Api\ActividadController;
 use App\Http\Controllers\Api\ProgramaActividadController;
 use App\Http\Controllers\Api\FacturaController;
 use App\Http\Controllers\Api\DetalleFacturaController;
-
+use App\Http\Controllers\Api\PasswordResetController;
 // Ruta de prueba para verificar que la API funciona
 Route::get('/test', function () {
     return response()->json(['message' => 'API funcionando correctamente']);
@@ -50,3 +50,5 @@ Route::apiResource('programa-actividades', ProgramaActividadController::class);
 Route::apiResource('roles', RolController::class);
 Route::apiResource('usuarios', UsuarioController::class);
 Route::post('/register', [\App\Http\Controllers\Api\AuthController::class, 'register']);
+Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLink']);
+Route::post('/reset-password',  [PasswordResetController::class, 'resetPassword']);

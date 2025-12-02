@@ -1,64 +1,171 @@
 import React, { useState } from "react";
-import "../../css/reestablecer.css"; // asegúrate de que tu CSS esté en resources/css/
+import { Link, useLocation } from "react-router-dom";
+import "../../css/reestablecer.css";
 
 export default function ReestablecerContrasena() {
-  const [token, setToken] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [mensaje, setMensaje] = useState("");
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const tokenFromUrl = params.get("token") || "";
+  const emailFromUrl = params.get("email") || "";
 
-  const handleSubmit = (e) => {
+  const [formData, setFormData] = useState({
+    email: emailFromUrl,
+    token: tokenFromUrl,
+    password: "",
+    password_confirmation: "",
+  });
+
+  const [mensaje, setMensaje] = useState("");
+  const [errores, setErrores] = useState([]);
+  const [cargando, setCargando] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (password !== confirmPassword) {
-      setMensaje("Las contraseñas no coinciden.");
+    const nuevosErrores = [];
+    if (!formData.email.trim())
+      nuevosErrores.push("El correo es obligatorio.");
+    if (!formData.token.trim())
+      nuevosErrores.push("El código/token es obligatorio.");
+    if (formData.password.length < 6)
+      nuevosErrores.push("La contraseña debe tener al menos 6 caracteres.");
+    if (formData.password !== formData.password_confirmation)
+      nuevosErrores.push("Las contraseñas no coinciden.");
+
+    if (nuevosErrores.length > 0) {
+      setErrores(nuevosErrores);
+      setMensaje("");
       return;
     }
 
-    console.log({ token, password, confirmPassword });
-    setMensaje("Contraseña actualizada correctamente.");
+    try {
+      setCargando(true);
+      setErrores([]);
+      setMensaje("");
+
+      const response = await fetch("http://127.0.0.1:8000/api/reset-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (data.errors) {
+          const erroresLaravel = Object.values(data.errors).flat();
+          setErrores(erroresLaravel);
+        } else if (data.message) {
+          setErrores([data.message]);
+        } else {
+          setErrores(["Ocurrió un error al restablecer la contraseña."]);
+        }
+        setMensaje("");
+        return;
+      }
+
+      setMensaje(
+        "Tu contraseña ha sido restablecida correctamente. Ya puedes iniciar sesión."
+      );
+      setErrores([]);
+
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 2000);
+    } catch (error) {
+      console.error(error);
+      setErrores(["Error de conexión con el servidor."]);
+      setMensaje("");
+    } finally {
+      setCargando(false);
+    }
   };
 
   return (
-    <div className="reestablecer-container">
-      <h2>Reestablecer Contraseña</h2>
+    <div className="reestablecer-page">
+      <div className="reestablecer-container">
+        <h2>Reestablecer Contraseña</h2>
 
-      <form onSubmit={handleSubmit}>
-        <label>Código de verificación:</label>
-        <input
-          type="text"
-          value={token}
-          onChange={(e) => setToken(e.target.value)}
-          placeholder="Ingresa el código que recibiste"
-          required
-        />
+        {mensaje && <p className="mensaje-ok">{mensaje}</p>}
+        {errores.length > 0 && (
+          <div className="alert" role="alert">
+            <ul>
+              {errores.map((err, i) => (
+                <li key={i}>{err}</li>
+              ))}
+            </ul>
+          </div>
+        )}
 
-        <label>Nueva contraseña:</label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Ingresa la nueva contraseña"
-          required
-        />
+        <form onSubmit={handleSubmit}>
+          <label htmlFor="email">Correo electrónico:</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Tu correo registrado"
+            value={formData.email}
+            onChange={handleChange}
+            required
+            disabled={cargando}
+          />
 
-        <label>Confirmar contraseña:</label>
-        <input
-          type="password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          placeholder="Confirma la contraseña"
-          required
-        />
+          <label htmlFor="token">Código / Token:</label>
+          <input
+            type="text"
+            id="token"
+            name="token"
+            placeholder="Código que llegó a tu correo"
+            value={formData.token}
+            onChange={handleChange}
+            required
+            disabled={cargando}
+          />
 
-        {mensaje && <p className="mensaje">{mensaje}</p>}
+          <label htmlFor="password">Nueva contraseña:</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Mínimo 6 caracteres"
+            value={formData.password}
+            onChange={handleChange}
+            required
+            disabled={cargando}
+          />
 
-        <button type="submit">Actualizar contraseña</button>
-      </form>
+          <label htmlFor="password_confirmation">Repite la contraseña:</label>
+          <input
+            type="password"
+            id="password_confirmation"
+            name="password_confirmation"
+            placeholder="Repite tu nueva contraseña"
+            value={formData.password_confirmation}
+            onChange={handleChange}
+            required
+            disabled={cargando}
+          />
 
-      <p>
-        <a href="/login">Volver al inicio de sesión</a>
-      </p>
+          <button type="submit" disabled={cargando}>
+            {cargando ? "Guardando..." : "Guardar nueva contraseña"}
+          </button>
+        </form>
+
+        <p className="info-link">
+          <Link to="/">Volver al inicio</Link>
+        </p>
+      </div>
     </div>
   );
 }
