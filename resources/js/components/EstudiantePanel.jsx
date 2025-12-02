@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import "../../css/estudiante.css"; // tu CSS original de Blade
 
 export default function EstudiantePanel() {
@@ -33,6 +34,19 @@ export default function EstudiantePanel() {
     setIndex((prev) => (prev + n + slides.length) % slides.length);
   };
 
+  // ============================
+  // 🔐 LOGOUT PARA REACT
+  // ============================
+  const handleLogout = async () => {
+    try {
+      await axios.post("http://localhost:8000/api/logout");
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+    }
+    // Redirige a la página principal (login o landing)
+    window.location.href = "/";
+  };
+
   return (
     <div className="estudiante-panel">
       <header>
@@ -42,9 +56,9 @@ export default function EstudiantePanel() {
             <li><a href="#">Mis Cursos</a></li>
             <li><a href="#">Perfil</a></li>
             <li>
-              <form action="/logout" method="POST">
-                <button type="submit" className="logout-btn">Cerrar Sesión</button>
-              </form>
+              <button onClick={handleLogout} className="logout-btn">
+                Cerrar Sesión
+              </button>
             </li>
           </ul>
         </nav>
@@ -63,7 +77,11 @@ export default function EstudiantePanel() {
                   <h2>{slide.title}</h2>
                   <p>{slide.text}</p>
                   <div className="buttons">
-                    <button onClick={() => setModal({ show: true, title: slide.title, text: slide.info })}>
+                    <button
+                      onClick={() =>
+                        setModal({ show: true, title: slide.title, text: slide.info })
+                      }
+                    >
                       Más información
                     </button>
                     <a href={slide.link} className="register-btn">Registrarse</a>
@@ -81,7 +99,12 @@ export default function EstudiantePanel() {
       {modal.show && (
         <div className="modal" onClick={() => setModal({ ...modal, show: false })}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <span className="close" onClick={() => setModal({ ...modal, show: false })}>&times;</span>
+            <span
+              className="close"
+              onClick={() => setModal({ ...modal, show: false })}
+            >
+              &times;
+            </span>
             <h2>{modal.title}</h2>
             <p>{modal.text}</p>
           </div>

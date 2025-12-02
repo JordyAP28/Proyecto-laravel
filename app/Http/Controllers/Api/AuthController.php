@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Usuario;
+use Illuminate\Container\Attributes\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
@@ -172,4 +173,27 @@ class AuthController extends Controller
             ], 500);
         }
     }
+
+    public function logout(Request $request)
+{
+    try {
+        // Si usas sesiones (aunque normalmente API no usa)
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        Log::info('Logout exitoso');
+
+        return redirect('http://localhost:8000'); 
+        // O simplemente return redirect('/');
+        
+    } catch (\Exception $e) {
+        Log::error('Error en logout: ' . $e->getMessage());
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al cerrar sesión',
+        ], 500);
+    }
+}
+
 }
