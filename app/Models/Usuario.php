@@ -11,13 +11,27 @@ class Usuario extends Model
 
     protected $table = 'usuarios';
     protected $primaryKey = 'id_usuario';
+    public $timestamps = false;
 
     protected $fillable = [
         'nombre_usuario',
+        'primer_nombre',
+        'apellido',
+        'cedula',
+        'telefono',
+        'email',
         'clave',
         'id_rol',
         'id_estado'
     ];
+
+    protected $hidden = ['clave'];
+
+    // Hashear contraseña automáticamente
+    public function setClaveAttribute($value)
+    {
+        $this->attributes['clave'] = bcrypt($value);
+    }
 
     public function rol()
     {
@@ -32,10 +46,5 @@ class Usuario extends Model
     public function logs()
     {
         return $this->hasMany(LogSistema::class, 'id_usuario', 'id_usuario');
-    }
-
-    public function setClaveAttribute($value)
-    {
-        $this->attributes['clave'] = bcrypt($value);
     }
 }

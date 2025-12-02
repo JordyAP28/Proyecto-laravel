@@ -49,3 +49,4 @@ Route::apiResource('log-sistemas', LogSistemaController::class);
 Route::apiResource('programa-actividades', ProgramaActividadController::class);
 Route::apiResource('roles', RolController::class);
 Route::apiResource('usuarios', UsuarioController::class);
+Route::post('/register', [\App\Http\Controllers\Api\AuthController::class, 'register']);

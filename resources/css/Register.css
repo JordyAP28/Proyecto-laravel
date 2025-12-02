@@ -163,3 +163,13 @@ body {
     display: none;
   }
 }
+.checkbox-terminos {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #2a3249;
+}
+
+.checkbox-terminos input {
+  margin-right: 8px;
+}
