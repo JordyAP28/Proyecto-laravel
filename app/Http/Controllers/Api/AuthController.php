@@ -7,9 +7,87 @@ use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    public function login(Request $request)
+    {
+        try {
+            Log::info('Petición de login recibida', ['email' => $request->email]);
+
+            $validator = Validator::make($request->all(), [
+                'email' => 'required|email',
+                'password' => 'required|string|min:6',
+            ], [
+                'email.required' => 'El email es obligatorio',
+                'email.email' => 'El email no es válido',
+                'password.required' => 'La contraseña es obligatoria',
+                'password.min' => 'La contraseña debe tener al menos 6 caracteres',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error en la validación',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            // Buscar usuario por email
+            $usuario = Usuario::where('email', $request->email)->first();
+
+            if (!$usuario) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Credenciales incorrectas',
+                ], 401);
+            }
+
+            // Verificar contraseña
+            if (!Hash::check($request->password, $usuario->clave)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Credenciales incorrectas',
+                ], 401);
+            }
+
+            // Verificar si el usuario está activo
+            if ($usuario->id_estado != 1) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Usuario inactivo. Contacta al administrador.',
+                ], 403);
+            }
+
+            // Crear token de autenticación (si usas Sanctum)
+            // $token = $usuario->createToken('auth_token')->plainTextToken;
+
+            Log::info('Login exitoso', ['usuario_id' => $usuario->id_usuario]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Login exitoso',
+                'data' => [
+                    'id_usuario' => $usuario->id_usuario,
+                    'nombre_usuario' => $usuario->nombre_usuario,
+                    'primer_nombre' => $usuario->primer_nombre,
+                    'apellido' => $usuario->apellido,
+                    'email' => $usuario->email,
+                    'id_rol' => $usuario->id_rol,
+                    // 'token' => $token, // Descomenta si usas Sanctum
+                ]
+            ], 200);
+
+        } catch (\Exception $e) {
+            Log::error('Error en login: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al iniciar sesión',
+            ], 500);
+        }
+    }
+
     public function register(Request $request)
     {
         try {
@@ -52,7 +130,7 @@ class AuthController extends Controller
                 'cedula' => $request->cedula,
                 'telefono' => $request->telefono,
                 'email' => $request->email,
-                'clave' => $request->password,
+                'clave' => Hash::make($request->password),
                 'nombre_usuario' => $request->email,
                 'id_rol' => 3, // Deportista (estudiante)
                 'id_estado' => 1, // Estado activo

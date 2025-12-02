@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\CampeonatoController;
 use App\Http\Controllers\Api\ClubCampeonatoController;
 use App\Http\Controllers\Api\EscenarioController;
 use App\Http\Controllers\Api\ActividadController;
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ProgramaActividadController;
 use App\Http\Controllers\Api\FacturaController;
 use App\Http\Controllers\Api\DetalleFacturaController;
@@ -49,6 +50,11 @@ Route::apiResource('log-sistemas', LogSistemaController::class);
 Route::apiResource('programa-actividades', ProgramaActividadController::class);
 Route::apiResource('roles', RolController::class);
 Route::apiResource('usuarios', UsuarioController::class);
-Route::post('/register', [\App\Http\Controllers\Api\AuthController::class, 'register']);
+
+Route::prefix('auth')->group(function () {
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
+});
+
 Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLink']);
 Route::post('/reset-password',  [PasswordResetController::class, 'resetPassword']);

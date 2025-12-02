@@ -5,34 +5,78 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [mensaje, setMensaje] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  // URL base de tu API Laravel
+  const API_URL = 'http://localhost:8000/api';
 
   // Función de validación
   const validarCampos = () => {
-    // Validar formato de correo
     const formatoCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!formatoCorreo.test(email)) {
       return "Por favor ingrese un correo válido.";
     }
 
-    // Validar contraseña mínima de 6 caracteres
     if (password.length < 6) {
       return "La contraseña debe tener al menos 6 caracteres.";
     }
 
-    return null; // Todo correcto
+    return null;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    setMensaje('');
 
-    const error = validarCampos();
-    if (error) {
-      setMensaje(error);
+    // Validar campos antes de enviar
+    const errorValidacion = validarCampos();
+    if (errorValidacion) {
+      setError(errorValidacion);
       return;
     }
 
-    // Si pasa validaciones
-    setMensaje(` Bienvenido, ${email}`);
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        // Login exitoso
+        setMensaje(`¡Bienvenido, ${data.data.primer_nombre} ${data.data.apellido}!`);
+        
+        // Guardar datos del usuario en localStorage
+        localStorage.setItem('user', JSON.stringify(data.data));
+        
+        // Redirigir al dashboard después de 1.5 segundos
+        setTimeout(() => {
+          window.location.href = '/dashboard'; // Ajusta según tu ruta
+        }, 1500);
+        
+      } else {
+        // Error de autenticación
+        setError(data.message || 'Credenciales incorrectas');
+      }
+
+    } catch (err) {
+      console.error('Error en login:', err);
+      setError('Error de conexión con el servidor. Por favor intenta de nuevo.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -50,6 +94,7 @@ const Login = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              disabled={isLoading}
             />
           </div>
 
@@ -63,13 +108,17 @@ const Login = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
+              disabled={isLoading}
             />
           </div>
 
-          <button type="submit">Ingresar</button>
+          <button type="submit" disabled={isLoading}>
+            {isLoading ? 'Ingresando...' : 'Ingresar'}
+          </button>
         </form>
 
-        {mensaje && <p className="mensaje">{mensaje}</p>}
+        {error && <p className="mensaje error">{error}</p>}
+        {mensaje && <p className="mensaje success">{mensaje}</p>}
 
         <p className="links">
           <a href="/RecuperarContraseña">¿Olvidaste tu contraseña?</a> |{' '}
