@@ -20,9 +20,14 @@ ReactDOM.createRoot(document.getElementById("react-root")).render(
   <React.StrictMode>
     <BrowserRouter>
       <Routes>
+        
         <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
+
         <Route path="/recuperar-contrasena" element={<RecuperarContrasena />} />
         <Route path="/reestablecer-contrasena" element={<ReestablecerContrasena />} />
+
+        
         <Route path="/register" element={<Register />} />
         <Route path="/registro" element={<Registro />} />
         <Route path="/estudiante" element={<EstudiantePanel />} />
