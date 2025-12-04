@@ -28,9 +28,13 @@ export default function AdminPanel() {
           <button onClick={() => setSection("reportes")}>Reportes</button>
           <button onClick={() => setSection("admin")}>Administradores</button>
 
-          <form action="/logout" method="POST">
-            <button className="logout-btn">Cerrar Sesión</button>
-          </form>
+          <button 
+  className="logout-btn"
+  onClick={() => { window.location.href = "/"; }}
+>
+  Cerrar Sesión
+</button>
+
         </nav>
       </header>
 

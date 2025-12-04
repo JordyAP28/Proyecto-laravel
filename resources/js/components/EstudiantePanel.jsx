@@ -53,7 +53,7 @@ export default function EstudiantePanel() {
         <div className="logo">Cursos Vacacionales</div>
         <nav>
           <ul>
-            <li><a href="cursos">Mis Cursos</a></li>
+            <li><a href="curso">Mis Cursos</a></li>
             <li><a href="perfil">Perfil</a></li>
             <li>
               <button onClick={handleLogout} className="logout-btn">

@@ -11,6 +11,7 @@ import Register from "./components/register";
 import Registro from "./components/registro";
 import Administracion from "./components/Administracion";
 import Perfil from "./components/perfil";
+import Curso from "./components/curso";
 
 
 
@@ -26,7 +27,8 @@ ReactDOM.createRoot(document.getElementById("react-root")).render(
         <Route path="/registro" element={<Registro />} />
         <Route path="/estudiante" element={<EstudiantePanel />} />
        <Route path="/Administracion" element={<Administracion />} />
-        <Route path="/perfil" element={<Perfil />} />
+      <Route path="/perfil" element={<Perfil />} />
+        <Route path="/curso" element={<Curso />} />
 
 
       </Routes>

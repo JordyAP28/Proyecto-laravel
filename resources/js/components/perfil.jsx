@@ -15,31 +15,24 @@ export default function UserProfile() {
     foto: ""
   });
 
-  // ===== FETCH Real Para BD =====
+  // ================= FETCH Real Desde BD =================
   useEffect(() => {
     /*
-    Ejemplo cuando conectes tu API:
-
     fetch("/api/usuario/perfil")
       .then(res => res.json())
       .then(data => setUser(data));
     */
   }, []);
-  // ==============================
+  // =======================================================
 
   const handleChange = (e) => {
-    setUser({
-      ...user,
-      [e.target.name]: e.target.value,
-    });
+    setUser({ ...user, [e.target.name]: e.target.value });
   };
 
   const guardarCambios = () => {
     setEditMode(false);
 
     /*
-    POST o PUT para guardar en BD:
-
     fetch("/api/usuario/actualizar", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -51,9 +44,19 @@ export default function UserProfile() {
   return (
     <div className="perfil-container">
 
+      {/* ======================= BARRA SUPERIOR ======================= */}
+      <div className="perfil-header">
+        <h2>Perfil del Usuario</h2>
+
+        <a href="/estudiante" className="btn-volver">
+          ⬅ Regresar a Estudiante
+        </a>
+      </div>
+
+      {/* ======================= TARJETA CENTRAL ======================= */}
       <div className="perfil-card">
 
-        {/* ================== FOTO ================== */}
+        {/* FOTO */}
         <div className="perfil-foto">
           <img
             src={
@@ -61,7 +64,7 @@ export default function UserProfile() {
                 ? user.foto
                 : "https://cdn-icons-png.flaticon.com/512/149/149071.png"
             }
-            alt="Foto del usuario"
+            alt="Foto del Usuario"
           />
 
           {editMode && (
@@ -75,58 +78,69 @@ export default function UserProfile() {
           )}
         </div>
 
-        {/* ================== TITULO ================== */}
-        <h2>Mi Perfil</h2>
-
-        {/* ================== INFORMACIÓN ================== */}
+        {/* INFORMACIÓN */}
         <div className="perfil-info">
-          <label>Nombre:</label>
-          {editMode ? (
-            <input type="text" name="nombre" value={user.nombre} onChange={handleChange} />
-          ) : (
-            <p>{user.nombre || "—"}</p>
-          )}
+          <div className="info-group">
+            <label>Nombre</label>
+            {editMode ? (
+              <input type="text" name="nombre" value={user.nombre} onChange={handleChange} />
+            ) : (
+              <p>{user.nombre || "—"}</p>
+            )}
+          </div>
 
-          <label>Apellido:</label>
-          {editMode ? (
-            <input type="text" name="apellido" value={user.apellido} onChange={handleChange} />
-          ) : (
-            <p>{user.apellido || "—"}</p>
-          )}
+          <div className="info-group">
+            <label>Apellido</label>
+            {editMode ? (
+              <input type="text" name="apellido" value={user.apellido} onChange={handleChange} />
+            ) : (
+              <p>{user.apellido || "—"}</p>
+            )}
+          </div>
 
-          <label>Correo:</label>
-          {editMode ? (
-            <input type="email" name="email" value={user.email} onChange={handleChange} />
-          ) : (
-            <p>{user.email || "—"}</p>
-          )}
+          <div className="info-group">
+            <label>Correo</label>
+            {editMode ? (
+              <input type="email" name="email" value={user.email} onChange={handleChange} />
+            ) : (
+              <p>{user.email || "—"}</p>
+            )}
+          </div>
 
-          <label>Teléfono:</label>
-          {editMode ? (
-            <input type="text" name="telefono" value={user.telefono} onChange={handleChange} />
-          ) : (
-            <p>{user.telefono || "—"}</p>
-          )}
+          <div className="info-group">
+            <label>Teléfono</label>
+            {editMode ? (
+              <input type="text" name="telefono" value={user.telefono} onChange={handleChange} />
+            ) : (
+              <p>{user.telefono || "—"}</p>
+            )}
+          </div>
 
-          <label>Dirección:</label>
-          {editMode ? (
-            <input type="text" name="direccion" value={user.direccion} onChange={handleChange} />
-          ) : (
-            <p>{user.direccion || "—"}</p>
-          )}
+          <div className="info-group">
+            <label>Dirección</label>
+            {editMode ? (
+              <input type="text" name="direccion" value={user.direccion} onChange={handleChange} />
+            ) : (
+              <p>{user.direccion || "—"}</p>
+            )}
+          </div>
 
-          <label>Curso Inscrito:</label>
-          {editMode ? (
-            <input type="text" name="curso" value={user.curso} onChange={handleChange} />
-          ) : (
-            <p>{user.curso || "—"}</p>
-          )}
+          <div className="info-group">
+            <label>Curso Inscrito</label>
+            {editMode ? (
+              <input type="text" name="curso" value={user.curso} onChange={handleChange} />
+            ) : (
+              <p>{user.curso || "—"}</p>
+            )}
+          </div>
 
-          <label>Fecha de Registro:</label>
-          <p>{user.fechaRegistro || "—"}</p>
+          <div className="info-group">
+            <label>Fecha de Registro</label>
+            <p>{user.fechaRegistro || "—"}</p>
+          </div>
         </div>
 
-        {/* ================== BOTONES ================== */}
+        {/* BOTONES */}
         <div className="perfil-botones">
           {!editMode ? (
             <button className="btn-edit" onClick={() => setEditMode(true)}>
@@ -135,7 +149,9 @@ export default function UserProfile() {
           ) : (
             <>
               <button className="btn-save" onClick={guardarCambios}>Guardar Cambios</button>
-              <button className="btn-cancel" onClick={() => setEditMode(false)}>Cancelar</button>
+              <button className="btn-cancel" onClick={() => setEditMode(false)}>
+                Cancelar
+              </button>
             </>
           )}
         </div>
