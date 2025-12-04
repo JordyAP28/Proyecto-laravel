@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../../css/registro.css"; // tu CSS adaptado
+import "../../css/registro.css";
 
 export default function Registro() {
   const [formData, setFormData] = useState({
@@ -9,11 +9,13 @@ export default function Registro() {
     password: "",
     password_confirmation: "",
     pago: "",
+    foto: null,
     comprobante: null,
   });
 
   const [mensaje, setMensaje] = useState("");
   const [errores, setErrores] = useState([]);
+  const [mostrarPagoInfo, setMostrarPagoInfo] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -21,12 +23,17 @@ export default function Registro() {
       ...formData,
       [name]: files ? files[0] : value,
     });
+
+    if (name === "pago" && value === "no") {
+      setMostrarPagoInfo(true);
+    } else if (name === "pago" && value === "si") {
+      setMostrarPagoInfo(false);
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validaciones básicas
     const nuevosErrores = [];
     if (!formData.nombre.trim()) nuevosErrores.push("El nombre es obligatorio.");
     if (!formData.correo.includes("@")) nuevosErrores.push("El correo no es válido.");
@@ -36,6 +43,7 @@ export default function Registro() {
     if (formData.password !== formData.password_confirmation)
       nuevosErrores.push("Las contraseñas no coinciden.");
     if (!formData.pago) nuevosErrores.push("Debe indicar si realizó el pago.");
+    if (!formData.foto) nuevosErrores.push("Debe subir su foto de perfil.");
 
     if (nuevosErrores.length > 0) {
       setErrores(nuevosErrores);
@@ -44,8 +52,9 @@ export default function Registro() {
     }
 
     console.log("Datos enviados:", formData);
+
     setErrores([]);
-    setMensaje("✅ Registro completado correctamente. ¡Bienvenido al curso vacacional!");
+    setMensaje(" Registro completado correctamente.");
   };
 
   return (
@@ -56,7 +65,7 @@ export default function Registro() {
         {mensaje && <div className="mensaje">{mensaje}</div>}
 
         {errores.length > 0 && (
-          <div className="mensaje">
+          <div className="mensaje error">
             <ul>
               {errores.map((error, i) => (
                 <li key={i}>{error}</li>
@@ -90,17 +99,17 @@ export default function Registro() {
 
           <div className="form-group">
             <label>Curso a inscribirse</label>
-            <select
-              name="curso"
-              value={formData.curso}
-              onChange={handleChange}
-              required
-            >
+            <select name="curso" value={formData.curso} onChange={handleChange} required>
               <option value="">Seleccione un curso</option>
               <option value="futbol">Fútbol</option>
               <option value="basquetbol">Básquetbol</option>
               <option value="volleyball">Vóleibol</option>
             </select>
+          </div>
+
+          <div className="form-group">
+            <label>Subir foto de perfil</label>
+            <input type="file" name="foto" accept="image/*" onChange={handleChange} required />
           </div>
 
           <div className="form-group">
@@ -129,6 +138,7 @@ export default function Registro() {
 
           <div className="form-group">
             <label>¿Has realizado el pago?</label>
+
             <div className="radio-group">
               <label>
                 <input
@@ -137,9 +147,10 @@ export default function Registro() {
                   value="si"
                   checked={formData.pago === "si"}
                   onChange={handleChange}
-                />{" "}
+                />
                 Sí
               </label>
+
               <label>
                 <input
                   type="radio"
@@ -147,20 +158,15 @@ export default function Registro() {
                   value="no"
                   checked={formData.pago === "no"}
                   onChange={handleChange}
-                />{" "}
+                />
                 No
               </label>
             </div>
           </div>
 
           <div className="form-group">
-            <label>Adjuntar comprobante de pago</label>
-            <input
-              type="file"
-              name="comprobante"
-              accept="image/*"
-              onChange={handleChange}
-            />
+            <label>Adjuntar comprobante (opcional si aún no paga)</label>
+            <input type="file" name="comprobante" accept="image/*" onChange={handleChange} />
           </div>
 
           <button type="submit" className="register-btn">
@@ -172,6 +178,27 @@ export default function Registro() {
           ¿Ya tienes cuenta? <a href="/login">Inicia sesión</a>
         </div>
       </div>
+
+      {/* Modal de información de pago */}
+      {mostrarPagoInfo && (
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <h3>Información de Pago</h3>
+            <p>Debe realizar el pago para completar su inscripción.</p>
+
+            <ul className="lista-pago">
+              <li><strong>Número de cuenta:</strong> 1234567890</li>
+              <li><strong>Banco:</strong> Banco Pichincha</li>
+              <li><strong>Titular:</strong> Vacacionales ULEAM</li>
+              <li><strong>Monto:</strong> $25.00</li>
+            </ul>
+
+            <button className="cerrar-modal" onClick={() => setMostrarPagoInfo(false)}>
+              Entendido
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

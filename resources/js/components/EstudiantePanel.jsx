@@ -35,7 +35,7 @@ export default function EstudiantePanel() {
   };
 
   // ============================
-  // 🔐 LOGOUT PARA REACT
+  //  LOGOUT PARA REACT
   // ============================
   const handleLogout = async () => {
     try {
@@ -53,8 +53,8 @@ export default function EstudiantePanel() {
         <div className="logo">Cursos Vacacionales</div>
         <nav>
           <ul>
-            <li><a href="#">Mis Cursos</a></li>
-            <li><a href="#">Perfil</a></li>
+            <li><a href="cursos">Mis Cursos</a></li>
+            <li><a href="perfil">Perfil</a></li>
             <li>
               <button onClick={handleLogout} className="logout-btn">
                 Cerrar Sesión
