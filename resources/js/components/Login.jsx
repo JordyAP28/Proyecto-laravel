@@ -24,7 +24,6 @@ export default function Login() {
 
       // Redirigir al panel
       window.location.href = "/estudiante";
-
     } catch (error) {
       if (error.response) {
         setMensaje(error.response.data.message);
@@ -34,8 +33,21 @@ export default function Login() {
     }
   };
 
+  const handleBack = () => {
+    window.history.back(); // retrocede a la página anterior
+  };
+
   return (
     <div className="login-horizontal-container">
+      {/* Botón X arriba a la derecha */}
+      <button
+        type="button"
+        className="close-button"
+        onClick={handleBack}
+      >
+        ✕
+      </button>
+
       <div className="login-left">
         <h2>Iniciar Sesión</h2>
 

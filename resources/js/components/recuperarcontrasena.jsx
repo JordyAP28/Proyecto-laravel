@@ -29,14 +29,17 @@ export default function RecuperarContrasena() {
       setErrores([]);
       setMensaje("");
 
-      const response = await fetch("http://127.0.0.1:8000/api/forgot-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/forgot-password",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({ email }),
+        }
+      );
 
       const data = await response.json();
 
@@ -64,9 +67,22 @@ export default function RecuperarContrasena() {
     }
   };
 
+  const handleBack = () => {
+    window.history.back(); // retroceder a la pantalla anterior
+  };
+
   return (
     <div className="recuperar-page">
       <div className="recuperar-container">
+        {/* Botón X arriba a la derecha */}
+        <button
+          type="button"
+          className="close-button"
+          onClick={handleBack}
+        >
+          ✕
+        </button>
+
         <h2>Recuperar Contraseña</h2>
 
         {mensaje && <p className="mensaje-ok">{mensaje}</p>}

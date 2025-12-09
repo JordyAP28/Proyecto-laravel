@@ -57,7 +57,7 @@ export default function Register() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Accept": "application/json",
+          Accept: "application/json",
         },
         body: JSON.stringify(formData),
       });
@@ -79,7 +79,7 @@ export default function Register() {
       } else {
         setErrores([]);
         setMensaje("✅ Registro exitoso. ¡Bienvenido al portal de estudiantes!");
-        
+
         setTimeout(() => {
           setFormData({
             primer_nombre: "",
@@ -103,8 +103,21 @@ export default function Register() {
     }
   };
 
+  const handleBack = () => {
+    window.history.back(); // retrocede a la página anterior
+  };
+
   return (
     <div className="login-horizontal-container">
+      {/* Botón X arriba a la derecha */}
+      <button
+        type="button"
+        className="close-button"
+        onClick={handleBack}
+      >
+        ✕
+      </button>
+
       <div className="login-left">
         <h2>Crear cuenta de estudiante</h2>
         {mensaje && <p className="mensaje">{mensaje}</p>}
@@ -146,7 +159,7 @@ export default function Register() {
             disabled={cargando}
           />
           <input
-            type="tel"
+            type="text"
             name="telefono"
             placeholder="Número de teléfono"
             value={formData.telefono}

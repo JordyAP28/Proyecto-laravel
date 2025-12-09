@@ -9,9 +9,9 @@ import RecuperarContrasena from "./components/recuperarcontrasena";
 import ReestablecerContrasena from "./components/reestablecercontrasena";
 import Register from "./components/register";
 import Registro from "./components/registro";
-import Administracion from "./components/Administracion";
 import Perfil from "./components/perfil";
 import Curso from "./components/curso";
+import Administracion from "./components/administracion";
 
 
 
@@ -31,8 +31,8 @@ ReactDOM.createRoot(document.getElementById("react-root")).render(
         <Route path="/register" element={<Register />} />
         <Route path="/registro" element={<Registro />} />
         <Route path="/estudiante" element={<EstudiantePanel />} />
-       <Route path="/Administracion" element={<Administracion />} />
-      <Route path="/perfil" element={<Perfil />} />
+        <Route path="/Administracion" element={<Administracion />} />
+        <Route path="/perfil" element={<Perfil />} />
         <Route path="/curso" element={<Curso />} />
 
 

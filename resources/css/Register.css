@@ -18,10 +18,37 @@ body {
   overflow: hidden;
   width: 900px;
   max-width: 95%;
+  position: relative; /* necesario para posicionar la X dentro del recuadro */
+}
+
+/* Botón X arriba a la derecha */
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: #f4f6f9;
+  color: #666;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.close-button:hover {
+  background: #e0e4ec;
+  color: #333;
 }
 
 /* ===== Lados izquierdo y derecho ===== */
-.login-left, .login-right {
+.login-left,
+.login-right {
   flex: 1;
   padding: 40px;
 }
@@ -163,6 +190,7 @@ body {
     display: none;
   }
 }
+
 .checkbox-terminos {
   margin-top: 10px;
   margin-bottom: 10px;
