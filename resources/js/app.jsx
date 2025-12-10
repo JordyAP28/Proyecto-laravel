@@ -11,7 +11,7 @@ import Register from "./components/register";
 import Registro from "./components/registro";
 import Perfil from "./components/perfil";
 import Curso from "./components/curso";
-import Administracion from "./components/administracion";
+import AdminDashboard from "./components/AdminDashboard";
 
 
 
@@ -31,9 +31,10 @@ ReactDOM.createRoot(document.getElementById("react-root")).render(
         <Route path="/register" element={<Register />} />
         <Route path="/registro" element={<Registro />} />
         <Route path="/estudiante" element={<EstudiantePanel />} />
-        <Route path="/Administracion" element={<Administracion />} />
+                <Route path="/Administracion" element={<AdminDashboard />} />
         <Route path="/perfil" element={<Perfil />} />
         <Route path="/curso" element={<Curso />} />
+        
 
 
       </Routes>

@@ -56,3 +56,13 @@ Route::post('/logout', [\App\Http\Controllers\Api\AuthController::class, 'logout
 
 Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLink']);
 Route::post('/reset-password',  [PasswordResetController::class, 'resetPassword']);
+
+// Rutas de autenticación de usuarios normales
+Route::post('/login', [\App\Http\Controllers\Api\LoginController::class, 'login']);
+
+// Rutas de administración
+Route::post('/admin/login', [\App\Http\Controllers\Api\AdminController::class, 'loginAdmin']);
+Route::get('/admin/usuarios', [\App\Http\Controllers\Api\AdminController::class, 'obtenerUsuarios']);
+Route::get('/admin/contar-usuarios', [\App\Http\Controllers\Api\AdminController::class, 'contarUsuarios']);
+Route::post('/admin/crear-usuario', [\App\Http\Controllers\Api\AdminController::class, 'crearUsuarioAdmin']);
+Route::delete('/admin/usuarios/{id}', [\App\Http\Controllers\Api\AdminController::class, 'eliminarUsuario']);

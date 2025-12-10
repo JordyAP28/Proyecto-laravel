@@ -2,17 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Usuario extends Authenticatable
+class Usuario extends Model
 {
-    use HasFactory, Notifiable;
+    use HasFactory;
 
     protected $table = 'usuarios';
     protected $primaryKey = 'id_usuario';
-    public $timestamps = true;
+    public $timestamps = false;
 
     protected $fillable = [
         'nombre_usuario',
@@ -23,12 +22,12 @@ class Usuario extends Authenticatable
         'email',
         'clave',
         'id_rol',
-        'id_estado',
+        'id_estado'
     ];
 
-    protected $hidden = [
-        'clave'
-    ];
+    protected $hidden = ['clave'];
+
+    // <CHANGE> Removed el mutador setClaveAttribute porque hasheamos explícitamente en los controladores
 
     public function rol()
     {
