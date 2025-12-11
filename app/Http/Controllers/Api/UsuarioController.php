@@ -32,9 +32,14 @@ class UsuarioController extends Controller
     {
         $validated = $request->validate([
             'nombre_usuario' => 'required|string|max:255|unique:usuarios,nombre_usuario',
-            'clave' => 'required|string|min:6',
-            'id_rol' => 'required|exists:roles,id_rol',
-            'id_estado' => 'nullable|exists:estados,id_estado',
+            'primer_nombre'  => 'required|string|max:255',
+            'apellido'       => 'required|string|max:255',
+            'cedula'         => 'required|string|max:10',
+            'telefono'       => 'required|string|max:15',
+            'email'          => 'required|email|max:255|unique:usuarios,email',
+            'clave'          => 'required|string|min:6',
+            'id_rol'         => 'required|exists:roles,id_rol',
+            'id_estado'      => 'nullable|exists:estados,id_estado',
         ]);
 
         // Encriptar contraseña
@@ -72,10 +77,16 @@ class UsuarioController extends Controller
     {
         $validated = $request->validate([
             'nombre_usuario' => 'required|string|max:255|unique:usuarios,nombre_usuario,' . $usuario->id_usuario . ',id_usuario',
-            'clave' => 'nullable|string|min:6',
-            'id_rol' => 'required|exists:roles,id_rol',
-            'id_estado' => 'required|exists:estados,id_estado',
+            'primer_nombre'  => 'required|string|max:255',
+            'apellido'       => 'required|string|max:255',
+            'cedula'         => 'required|string|max:10',
+            'telefono'       => 'required|string|max:15',
+            'email'          => 'required|email|max:255|unique:usuarios,email,' . $usuario->id_usuario . ',id_usuario',
+            'clave'          => 'nullable|string|min:6',
+            'id_rol'         => 'required|exists:roles,id_rol',
+            'id_estado'      => 'nullable|exists:estados,id_estado',
         ]);
+
 
         // Solo actualizar contraseña si se proporciona
         if ($request->filled('clave')) {
