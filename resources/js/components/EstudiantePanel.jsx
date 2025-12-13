@@ -7,7 +7,7 @@ export default function EstudiantePanel() {
   const [vista, setVista] = useState("inicio"); // inicio | misCursos
 
   const cerrarSesion = () => {
-    window.location.href = "/login"; // ajusta si tu ruta es otra
+    window.location.href = "/"; // ajusta si tu ruta es otra
   };
 
   /* =======================
