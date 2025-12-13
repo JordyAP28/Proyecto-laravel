@@ -441,4 +441,5 @@ export default function AdminPanel({ onLogout }) {
       </footer>
     </div>
   );
+
 }
