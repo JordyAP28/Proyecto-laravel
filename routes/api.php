@@ -66,3 +66,8 @@ Route::get('/admin/usuarios', [\App\Http\Controllers\Api\AdminController::class,
 Route::get('/admin/contar-usuarios', [\App\Http\Controllers\Api\AdminController::class, 'contarUsuarios']);
 Route::post('/admin/crear-usuario', [\App\Http\Controllers\Api\AdminController::class, 'crearUsuarioAdmin']);
 Route::delete('/admin/usuarios/{id}', [\App\Http\Controllers\Api\AdminController::class, 'eliminarUsuario']);
+
+// Rutas de reportes
+Route::get('/reportes/usuarios', [\App\Http\Controllers\Api\ReportController::class, 'reporteUsuarios']);
+Route::get('/reportes/exportar-excel', [\App\Http\Controllers\Api\ReportController::class, 'exportarExcel']);
+Route::get('/reportes/exportar-pdf', [\App\Http\Controllers\Api\ReportController::class, 'exportarPDF']);

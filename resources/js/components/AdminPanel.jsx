@@ -21,7 +21,6 @@ export default function AdminPanel({ onLogout }) {
   const [mensaje, setMensaje] = useState("");
   const [errores, setErrores] = useState([]);
 
-  // Cargar datos al montar el componente
   useEffect(() => {
     cargarDatos();
   }, []);
@@ -109,7 +108,6 @@ export default function AdminPanel({ onLogout }) {
         setErrores([]);
         setMensaje("Usuario creado exitosamente");
         
-        // Limpiar formulario
         setFormData({
           primer_nombre: "",
           apellido: "",
@@ -120,7 +118,6 @@ export default function AdminPanel({ onLogout }) {
           id_rol: 3,
         });
 
-        // Cerrar modal y recargar datos
         setTimeout(() => {
           setFormModal({ show: false, type: "usuario" });
           cargarDatos();
@@ -166,15 +163,100 @@ export default function AdminPanel({ onLogout }) {
     return roles[idRol] || "Desconocido";
   };
 
+  const handleDescargarReporte = async () => {
+    try {
+      setMensaje("Generando reporte...");
+      setErrores([]);
+      
+      const response = await fetch("http://127.0.0.1:8000/api/reportes/usuarios");
+      const data = await response.json();
+
+      if (data.success) {
+        console.log("Reporte de usuarios:", data);
+        setMensaje(`Reporte generado: ${data.total} usuarios en total`);
+        setTimeout(() => setMensaje(""), 3000);
+      } else {
+        setErrores(["Error al generar reporte"]);
+        setTimeout(() => setErrores([]), 3000);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setErrores(["Error de conexión al generar reporte"]);
+      setTimeout(() => setErrores([]), 3000);
+    }
+  };
+
+  const handleDescargarExcel = async () => {
+    try {
+      setMensaje("Generando archivo Excel...");
+      setErrores([]);
+      
+      const response = await fetch("http://127.0.0.1:8000/api/reportes/exportar-excel");
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `reporte_usuarios_${new Date().getTime()}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+
+        setMensaje("Excel descargado exitosamente");
+        setTimeout(() => setMensaje(""), 3000);
+      } else {
+        setErrores(["Error al descargar Excel"]);
+        setTimeout(() => setErrores([]), 3000);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setErrores(["Error de conexión al descargar Excel"]);
+      setTimeout(() => setErrores([]), 3000);
+    }
+  };
+
+  const handleDescargarPDF = async () => {
+    try {
+      setMensaje("Generando PDF...");
+      setErrores([]);
+      
+      const response = await fetch("http://127.0.0.1:8000/api/reportes/exportar-pdf");
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `reporte_usuarios_${new Date().getTime()}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+
+        setMensaje("PDF descargado exitosamente");
+        setTimeout(() => setMensaje(""), 3000);
+      } else {
+        setErrores(["Error al descargar PDF"]);
+        setTimeout(() => setErrores([]), 3000);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setErrores(["Error de conexión al descargar PDF"]);
+      setTimeout(() => setErrores([]), 3000);
+    }
+  };
+
   return (
     <div className="admin-panel">
-      {/* HEADER */}
       <header className="admin-header">
         <div className="logo">Panel de Administración</div>
 
         <nav className="top-menu">
           <button onClick={() => setSection("dashboard")}>Crear usuarios</button>
           <button onClick={() => setSection("usuarios")}>Usuarios</button>
+          <button onClick={() => setSection("reportes")}>Reportes</button>
 
           <button
             className="logout-btn"
@@ -188,9 +270,7 @@ export default function AdminPanel({ onLogout }) {
         </nav>
       </header>
 
-      {/* CONTENIDO PRINCIPAL */}
       <main>
-        {/* DASHBOARD */}
         {section === "dashboard" && (
           <section className="dashboard">
             <h2>Panel General</h2>
@@ -225,7 +305,6 @@ export default function AdminPanel({ onLogout }) {
           </section>
         )}
 
-        {/* USUARIOS */}
         {section === "usuarios" && (
           <section className="usuarios">
             <h2>Gestión de Usuarios</h2>
@@ -288,19 +367,87 @@ export default function AdminPanel({ onLogout }) {
           </section>
         )}
 
-        {/* REPORTES */}
         {section === "reportes" && (
           <section className="reportes">
             <h2>Reportes</h2>
 
-            <button className="btn-report">Reporte de Usuarios</button>
-            <button className="btn-report">Generar PDF</button>
-            <button className="btn-report">Exportar Excel</button>
+            {mensaje && (
+              <p style={{ 
+                backgroundColor: "#d4edda", 
+                color: "#155724", 
+                padding: "12px", 
+                borderRadius: "4px",
+                marginBottom: "20px" 
+              }}>
+                {mensaje}
+              </p>
+            )}
+
+            {errores.length > 0 && (
+              <div style={{ 
+                backgroundColor: "#f8d7da", 
+                color: "#721c24", 
+                padding: "12px", 
+                borderRadius: "4px",
+                marginBottom: "20px" 
+              }}>
+                {errores.map((error, i) => (
+                  <p key={i}>{error}</p>
+                ))}
+              </div>
+            )}
+
+            <button 
+              className="btn-report" 
+              onClick={handleDescargarReporte}
+              style={{ 
+                padding: "10px 20px", 
+                margin: "10px", 
+                backgroundColor: "#007bff", 
+                color: "white", 
+                border: "none", 
+                borderRadius: "4px", 
+                cursor: "pointer" 
+              }}
+            >
+              Reporte de Usuarios
+            </button>
+            
+            <button 
+              className="btn-report" 
+              onClick={handleDescargarExcel}
+              style={{ 
+                padding: "10px 20px", 
+                margin: "10px", 
+                backgroundColor: "#28a745", 
+                color: "white", 
+                border: "none", 
+                borderRadius: "4px", 
+                cursor: "pointer" 
+              }}
+            >
+              Exportar Excel
+            </button>
+            
+            <button 
+              className="btn-report" 
+              onClick={handleDescargarPDF}
+              style={{ 
+                padding: "10px 20px", 
+                margin: "10px", 
+                backgroundColor: "#dc3545", 
+                color: "white", 
+                border: "none", 
+                borderRadius: "4px", 
+                cursor: "pointer" 
+              }}
+            >
+              Generar PDF
+            </button>
           </section>
         )}
       </main>
 
-      {/* MODAL CREAR USUARIO */}
       {formModal.show && (
         <div
           className="modal"
