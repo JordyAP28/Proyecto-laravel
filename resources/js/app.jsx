@@ -12,6 +12,7 @@ import Registro from "./components/registro";
 import Perfil from "./components/perfil";
 import Curso from "./components/curso";
 import AdminDashboard from "./components/AdminDashboard";
+import Historial from "./components/historial";
 
 
 
@@ -34,6 +35,8 @@ ReactDOM.createRoot(document.getElementById("react-root")).render(
     <Route path="/Administracion" element={<AdminDashboard />} />
         <Route path="/perfil" element={<Perfil />} />
         <Route path="/curso" element={<Curso />} />
+                <Route path="/historial" element={<Historial />} />
+
         
 
 

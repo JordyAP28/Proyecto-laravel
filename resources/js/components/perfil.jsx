@@ -1,142 +1,90 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "../../css/perfil.css";
 
 export default function UserProfile() {
   const [editMode, setEditMode] = useState(false);
-  const [user, setUser] = useState({
-    id: "",
-    nombre: "",
-    apellido: "",
-    email: "",
-    telefono: "",
-    direccion: "",
-    curso: "",
-    fechaRegistro: "",
-    foto: ""
-  });
+  const [fotoPreview, setFotoPreview] = useState(null);
 
-  // ================= FETCH Real Desde BD =================
-  useEffect(() => {
-    /*
-    fetch("/api/usuario/perfil")
-      .then(res => res.json())
-      .then(data => setUser(data));
-    */
-  }, []);
-  // =======================================================
+  const [user, setUser] = useState({
+    nombre: "María",
+    apellido: "Mero",
+    email: "maria.mero@email.com",
+    telefono: "0999999999",
+    direccion: "Manta, Ecuador",
+    curso: "Fútbol Vacacional",
+    fechaRegistro: "2024-02-10"
+  });
 
   const handleChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
+  const handleFotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFotoPreview(URL.createObjectURL(file));
+    }
+  };
+
   const guardarCambios = () => {
     setEditMode(false);
-
-    /*
-    fetch("/api/usuario/actualizar", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(user),
-    });
-    */
+    // Aquí enviarías los datos + foto al backend
   };
 
   return (
     <div className="perfil-container">
-
-      {/* ======================= BARRA SUPERIOR ======================= */}
       <div className="perfil-header">
-        <h2>Perfil del Usuario</h2>
-
-        <a href="/estudiante" className="btn-volver">
-          ⬅ Regresar a Estudiante
-        </a>
+        <h2>Mi Perfil</h2>
+        <a href="/estudiante" className="btn-volver">⬅ Volver</a>
       </div>
 
-      {/* ======================= TARJETA CENTRAL ======================= */}
       <div className="perfil-card">
-
         {/* FOTO */}
         <div className="perfil-foto">
           <img
             src={
-              user.foto
-                ? user.foto
-                : "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+              fotoPreview ||
+              "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
             }
-            alt="Foto del Usuario"
+            alt="Foto perfil"
           />
 
           {editMode && (
-            <input
-              type="text"
-              name="foto"
-              placeholder="URL de foto"
-              value={user.foto}
-              onChange={handleChange}
-            />
+            <label className="upload-btn">
+              Cambiar foto
+              <input type="file" accept="image/*" onChange={handleFotoChange} />
+            </label>
           )}
         </div>
 
-        {/* INFORMACIÓN */}
+        {/* DATOS */}
         <div className="perfil-info">
-          <div className="info-group">
-            <label>Nombre</label>
-            {editMode ? (
-              <input type="text" name="nombre" value={user.nombre} onChange={handleChange} />
-            ) : (
-              <p>{user.nombre || "—"}</p>
-            )}
-          </div>
-
-          <div className="info-group">
-            <label>Apellido</label>
-            {editMode ? (
-              <input type="text" name="apellido" value={user.apellido} onChange={handleChange} />
-            ) : (
-              <p>{user.apellido || "—"}</p>
-            )}
-          </div>
-
-          <div className="info-group">
-            <label>Correo</label>
-            {editMode ? (
-              <input type="email" name="email" value={user.email} onChange={handleChange} />
-            ) : (
-              <p>{user.email || "—"}</p>
-            )}
-          </div>
-
-          <div className="info-group">
-            <label>Teléfono</label>
-            {editMode ? (
-              <input type="text" name="telefono" value={user.telefono} onChange={handleChange} />
-            ) : (
-              <p>{user.telefono || "—"}</p>
-            )}
-          </div>
-
-          <div className="info-group">
-            <label>Dirección</label>
-            {editMode ? (
-              <input type="text" name="direccion" value={user.direccion} onChange={handleChange} />
-            ) : (
-              <p>{user.direccion || "—"}</p>
-            )}
-          </div>
-
-          <div className="info-group">
-            <label>Curso Inscrito</label>
-            {editMode ? (
-              <input type="text" name="curso" value={user.curso} onChange={handleChange} />
-            ) : (
-              <p>{user.curso || "—"}</p>
-            )}
-          </div>
+          {[
+            ["Nombre", "nombre"],
+            ["Apellido", "apellido"],
+            ["Correo", "email"],
+            ["Teléfono", "telefono"],
+            ["Dirección", "direccion"],
+            ["Curso", "curso"]
+          ].map(([label, field]) => (
+            <div className="info-group" key={field}>
+              <label>{label}</label>
+              {editMode ? (
+                <input
+                  type="text"
+                  name={field}
+                  value={user[field]}
+                  onChange={handleChange}
+                />
+              ) : (
+                <p>{user[field]}</p>
+              )}
+            </div>
+          ))}
 
           <div className="info-group">
             <label>Fecha de Registro</label>
-            <p>{user.fechaRegistro || "—"}</p>
+            <p>{user.fechaRegistro}</p>
           </div>
         </div>
 
@@ -144,13 +92,15 @@ export default function UserProfile() {
         <div className="perfil-botones">
           {!editMode ? (
             <button className="btn-edit" onClick={() => setEditMode(true)}>
-              Editar Perfil
+              ✏️ Editar Perfil
             </button>
           ) : (
             <>
-              <button className="btn-save" onClick={guardarCambios}>Guardar Cambios</button>
+              <button className="btn-save" onClick={guardarCambios}>
+                💾 Guardar
+              </button>
               <button className="btn-cancel" onClick={() => setEditMode(false)}>
-                Cancelar
+                ✖ Cancelar
               </button>
             </>
           )}
