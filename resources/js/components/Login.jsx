@@ -59,7 +59,7 @@ setTimeout(() => {
   const rutasPorRol = {
     1: "/admin/dashboard",
     2: "/entrenador/dashboard",
-    3: "/deportista/dashboard",
+    3: "/Estudiante",
     4: "/secretaria/dashboard",
     5: "/tutor/dashboard",
   };
