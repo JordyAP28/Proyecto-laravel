@@ -41,6 +41,56 @@ export default function AdminPanel({ onLogout }) {
     }
   };
 
+  /* =====================
+     DESCARGAR EXCEL
+  ===================== */
+  const descargarExcel = async () => {
+    try {
+      const res = await fetch(
+        "http://127.0.0.1:8000/api/reportes/exportar-excel"
+      );
+
+      if (!res.ok) throw new Error("Error Excel");
+
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "reporte_usuarios.xlsx";
+      a.click();
+
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      alert("No se pudo descargar el Excel");
+    }
+  };
+
+  /* =====================
+     DESCARGAR PDF
+  ===================== */
+  const descargarPDF = async () => {
+    try {
+      const res = await fetch(
+        "http://127.0.0.1:8000/api/reportes/exportar-pdf"
+      );
+
+      if (!res.ok) throw new Error("Error PDF");
+
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "reporte_usuarios.pdf";
+      a.click();
+
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      alert("No se pudo descargar el PDF");
+    }
+  };
+
   return (
     <div className="estudiante-layout">
       {/* SIDEBAR */}
@@ -138,10 +188,17 @@ export default function AdminPanel({ onLogout }) {
         {section === "reportes" && (
           <>
             <h1>Reportes</h1>
+
             <div className="cards">
-              <div className="card">Reporte General</div>
-              <div className="card">Exportar Excel</div>
-              <div className="card">Generar PDF</div>
+              <div className="card" onClick={descargarExcel}>
+                <h3>Exportar Excel</h3>
+                <p>Listado completo</p>
+              </div>
+
+              <div className="card" onClick={descargarPDF}>
+                <h3>Generar PDF</h3>
+                <p>Reporte imprimible</p>
+              </div>
             </div>
           </>
         )}
