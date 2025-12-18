@@ -1,40 +1,124 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 import "../../css/estilo_login.css";
 
 export default function Login() {
   const [mensaje, setMensaje] = useState("");
+  const [errores, setErrores] = useState([]);
+  const [cargando, setCargando] = useState(false);
+  const navigate = useNavigate();
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    
     const email = e.target.email.value.trim();
     const password = e.target.password.value.trim();
 
+    // Validación básica
+    if (!email || !password) {
+      setErrores(["Por favor completa todos los campos"]);
+      return;
+    }
+
+    setCargando(true);
+    setErrores([]);
+    setMensaje("");
+
     try {
-      const response = await axios.post("http://127.0.0.1:8000/api/login", {
-        email,
-        password,
-      });
+      console.log("📤 Intentando login con:", { email });
 
-      // Guardar token
-      localStorage.setItem("token", response.data.token);
+      const response = await axios.post(
+        "http://localhost:8000/api/login",
+        {
+          email,
+          password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+          },
+        }
+      );
 
-      setMensaje("Inicio de sesión exitoso");
+      console.log("✅ Respuesta del servidor:", response.data);
 
-      // Redirigir al panel
-      window.location.href = "/estudiante";
-    } catch (error) {
-      if (error.response) {
-        setMensaje(error.response.data.message);
+// Guardar token y datos del usuario
+if (response.data.token) {
+  localStorage.setItem("token", response.data.token);
+  localStorage.setItem("user", JSON.stringify(response.data.usuario));
+
+  setMensaje("✔ Inicio de sesión exitoso. Redirigiendo...");
+
+setTimeout(() => {
+  const usuario = response.data.usuario;
+
+  const rutasPorRol = {
+    1: "/admin/dashboard",
+    2: "/entrenador/dashboard",
+    3: "/deportista/dashboard",
+    4: "/secretaria/dashboard",
+    5: "/tutor/dashboard",
+  };
+
+  const rutaDestino = rutasPorRol[usuario.id_rol] || "/dashboard";
+
+  console.log("👤 ID Rol:", usuario.id_rol);
+  console.log("🎯 Redirigiendo a:", rutaDestino);
+
+  navigate(rutaDestino);
+}, 1000);
+
+
+
       } else {
-        setMensaje("Error de conexión con el servidor");
+        setErrores(["No se recibió el token de autenticación"]);
       }
+
+    } catch (error) {
+      console.error("❌ Error de login:", error);
+
+      if (error.response) {
+        console.error("❌ Respuesta del servidor:", error.response.data);
+        
+        const nuevosErrores = [];
+
+        // Manejar diferentes tipos de errores
+        if (error.response.status === 401) {
+          nuevosErrores.push("Credenciales incorrectas. Verifica tu email y contraseña.");
+        } else if (error.response.status === 422) {
+          // Errores de validación
+          if (error.response.data.errors) {
+            for (const campo in error.response.data.errors) {
+              nuevosErrores.push(error.response.data.errors[campo][0]);
+            }
+          } else if (error.response.data.message) {
+            nuevosErrores.push(error.response.data.message);
+          }
+        } else if (error.response.data.message) {
+          nuevosErrores.push(error.response.data.message);
+        } else {
+          nuevosErrores.push("Error al iniciar sesión. Intenta de nuevo.");
+        }
+
+        setErrores(nuevosErrores);
+      } else if (error.request) {
+        console.error("❌ No se recibió respuesta del servidor");
+        setErrores(["No se puede conectar al servidor. Verifica que Laravel esté corriendo."]);
+      } else {
+        console.error("❌ Error:", error.message);
+        setErrores(["Error de conexión con el servidor"]);
+      }
+    } finally {
+      setCargando(false);
     }
   };
 
   const handleBack = () => {
-    window.history.back(); // retrocede a la página anterior
+    window.history.back();
   };
 
   return (
@@ -51,21 +135,51 @@ export default function Login() {
       <div className="login-left">
         <h2>Iniciar Sesión</h2>
 
+        {mensaje && <p className="mensaje" style={{ color: 'green' }}>{mensaje}</p>}
+        
+        {errores.length > 0 && (
+          <div className="alert" style={{ 
+            backgroundColor: '#fee', 
+            border: '1px solid #fcc', 
+            padding: '10px', 
+            borderRadius: '5px',
+            marginBottom: '15px'
+          }}>
+            <ul style={{ margin: 0, paddingLeft: '20px' }}>
+              {errores.map((error, i) => (
+                <li key={i} style={{ color: '#c00' }}>{error}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <label>Correo electrónico</label>
-            <input type="email" name="email" required />
+            <input 
+              type="email" 
+              name="email" 
+              required 
+              disabled={cargando}
+              autoComplete="email"
+            />
           </div>
 
           <div className="input-group">
             <label>Contraseña</label>
-            <input type="password" name="password" required />
+            <input 
+              type="password" 
+              name="password" 
+              required 
+              disabled={cargando}
+              autoComplete="current-password"
+            />
           </div>
 
-          <button type="submit">Ingresar</button>
+          <button type="submit" disabled={cargando}>
+            {cargando ? "Iniciando sesión..." : "Ingresar"}
+          </button>
         </form>
-
-        {mensaje && <p className="mensaje">{mensaje}</p>}
 
         <div className="links">
           <a href="/recuperar-contrasena">¿Olvidaste tu contraseña?</a><br />

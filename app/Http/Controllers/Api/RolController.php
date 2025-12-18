@@ -28,7 +28,7 @@ class RolController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'rol' => 'required|string|in:Administrador,Entrenador,Deportista,Secretaria|unique:roles,rol',
+            'rol' => 'required|string|in:Administrador,Entrenador,Deportista,Secretaria,Tutor|unique:roles,rol',
         ]);
 
         $rol = Rol::create($validated);
@@ -57,7 +57,7 @@ class RolController extends Controller
     public function update(Request $request, Rol $rol): JsonResponse
     {
         $validated = $request->validate([
-            'rol' => 'required|string|in:Administrador,Entrenador,Deportista,Secretaria|unique:roles,rol,' . $rol->id_rol . ',id_rol',
+            'rol' => 'required|string|in:Administrador,Entrenador,Deportista,Secretaria.Tutor|unique:roles,rol,' . $rol->id_rol . ',id_rol',
         ]);
 
         $rol->update($validated);

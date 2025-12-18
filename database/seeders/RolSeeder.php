@@ -14,6 +14,7 @@ class RolSeeder extends Seeder
             ['id_rol' => 2, 'rol' => 'Secretaria'],
             ['id_rol' => 3, 'rol' => 'Deportista'],
             ['id_rol' => 4, 'rol' => 'Entrenador'],
+            ['id_rol' => 5, 'rol' => 'Tutor']
         ]);
     }
 }

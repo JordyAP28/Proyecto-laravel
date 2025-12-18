@@ -13,6 +13,21 @@ import Perfil from "./components/perfil";
 import Curso from "./components/curso";
 import AdminDashboard from "./components/AdminDashboard";
 import Historial from "./components/historial";
+//rutas admin
+import DashboardAdmin from "./components/Admin/Dashboard";
+import PerfilAdmin from "./components/Admin/Perfil";
+//rutas entrenador
+import DashboardEntrenador from "./components/Entrenador/Dashboard";
+import PerfilEntrenador from "./components/Entrenador/Perfil";
+//rutas deportista
+import DashboardDeportista from "./components/Deportista/Dashboard";
+import PerfilDeportista from "./components/Deportista/Perfil";
+//rutas secretaria
+import DashboardSecretaria from "./components/Secretaria/Dashboard";
+import PerfilSecretaria from "./components/Secretaria/Perfil";
+//rutas tutor
+import DashboardTutor from "./components/Tutor/Dashboard";
+import PerfilTutor from "./components/Tutor/Perfil";
 
 
 
@@ -36,9 +51,21 @@ ReactDOM.createRoot(document.getElementById("react-root")).render(
         <Route path="/perfil" element={<Perfil />} />
         <Route path="/curso" element={<Curso />} />
                 <Route path="/historial" element={<Historial />} />
-
-        
-
+        //rutas admin
+        <Route path="/admin/dashboard" element={<DashboardAdmin />} />
+        <Route path="/admin/perfil" element={<PerfilAdmin />} />
+        //rutas entrenador
+        <Route path="/entrenador/dashboard" element={<DashboardEntrenador />} />
+        <Route path="/entrenador/perfil" element={<PerfilEntrenador />} />
+        //rutas deportista
+        <Route path="/deportista/dashboard" element={<DashboardDeportista />} />
+        <Route path="/deportista/perfil" element={<PerfilDeportista />} />
+        //rutas secretaria
+        <Route path="/secretaria/dashboard" element={<DashboardSecretaria />} />
+        <Route path="/secretaria/perfil" element={<PerfilSecretaria />} />
+        //rutas tutor
+        <Route path="/tutor/dashboard" element={<DashboardTutor />} />
+        <Route path="/tutor/perfil" element={<PerfilTutor />} />
 
       </Routes>
     </BrowserRouter>
