@@ -22,3 +22,5 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+admin-panel/.next/
+admin-panel/node_modules/

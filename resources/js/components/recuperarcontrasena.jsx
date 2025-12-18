@@ -109,7 +109,7 @@ export default function RecuperarContrasena() {
           />
 
           <button type="submit" disabled={cargando}>
-            {cargando ? "Enviando..." : "Enviar enlace"}
+            {cargando ? "Enviando..." : "Enviar codigo"}
           </button>
         </form>
 

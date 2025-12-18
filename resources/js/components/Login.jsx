@@ -10,7 +10,6 @@ export default function Login() {
   const [cargando, setCargando] = useState(false);
   const navigate = useNavigate();
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -46,33 +45,31 @@ export default function Login() {
 
       console.log("✅ Respuesta del servidor:", response.data);
 
-// Guardar token y datos del usuario
-if (response.data.token) {
-  localStorage.setItem("token", response.data.token);
-  localStorage.setItem("user", JSON.stringify(response.data.usuario));
+      // Guardar token y datos del usuario
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("user", JSON.stringify(response.data.usuario));
 
-  setMensaje("✔ Inicio de sesión exitoso. Redirigiendo...");
+        setMensaje("✔ Inicio de sesión exitoso. Redirigiendo...");
 
-setTimeout(() => {
-  const usuario = response.data.usuario;
+        setTimeout(() => {
+          const usuario = response.data.usuario;
 
-  const rutasPorRol = {
-    1: "/admin/dashboard",
-    2: "/entrenador/dashboard",
-    3: "/Estudiante",
-    4: "/secretaria/dashboard",
-    5: "/tutor/dashboard",
-  };
+          const rutasPorRol = {
+            1: "/admin/dashboard",
+            2: "/entrenador/dashboard",
+            3: "/Estudiante",
+            4: "/secretaria/dashboard",
+            5: "/tutor/dashboard",
+          };
 
-  const rutaDestino = rutasPorRol[usuario.id_rol] || "/dashboard";
+          const rutaDestino = rutasPorRol[usuario.id_rol] || "/dashboard";
 
-  console.log("👤 ID Rol:", usuario.id_rol);
-  console.log("🎯 Redirigiendo a:", rutaDestino);
+          console.log("👤 ID Rol:", usuario.id_rol);
+          console.log("🎯 Redirigiendo a:", rutaDestino);
 
-  navigate(rutaDestino);
-}, 1000);
-
-
+          navigate(rutaDestino);
+        }, 1000);
 
       } else {
         setErrores(["No se recibió el token de autenticación"]);
@@ -135,19 +132,13 @@ setTimeout(() => {
       <div className="login-left">
         <h2>Iniciar Sesión</h2>
 
-        {mensaje && <p className="mensaje" style={{ color: 'green' }}>{mensaje}</p>}
+        {mensaje && <p className="mensaje-ok">{mensaje}</p>}
         
         {errores.length > 0 && (
-          <div className="alert" style={{ 
-            backgroundColor: '#fee', 
-            border: '1px solid #fcc', 
-            padding: '10px', 
-            borderRadius: '5px',
-            marginBottom: '15px'
-          }}>
-            <ul style={{ margin: 0, paddingLeft: '20px' }}>
+          <div className="alert">
+            <ul>
               {errores.map((error, i) => (
-                <li key={i} style={{ color: '#c00' }}>{error}</li>
+                <li key={i}>{error}</li>
               ))}
             </ul>
           </div>
@@ -155,10 +146,12 @@ setTimeout(() => {
 
         <form onSubmit={handleSubmit}>
           <div className="input-group">
-            <label>Correo electrónico</label>
+            <label htmlFor="email">Correo electrónico</label>
             <input 
               type="email" 
+              id="email"
               name="email" 
+              placeholder="Ingresa tu correo"
               required 
               disabled={cargando}
               autoComplete="email"
@@ -166,10 +159,12 @@ setTimeout(() => {
           </div>
 
           <div className="input-group">
-            <label>Contraseña</label>
+            <label htmlFor="password">Contraseña</label>
             <input 
               type="password" 
+              id="password"
               name="password" 
+              placeholder="Ingresa tu contraseña"
               required 
               disabled={cargando}
               autoComplete="current-password"
