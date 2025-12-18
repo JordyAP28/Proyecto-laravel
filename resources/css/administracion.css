@@ -1,182 +1,138 @@
-/* ======== GENERAL ======== */
+* {
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+html,
 body {
   margin: 0;
-  font-family: "Poppins", sans-serif;
+  height: 100%;
+}
+
+.estudiante-layout {
+  display: flex;
+  height: 100vh;
   background: #f4f6fb;
 }
 
-.admin-panel {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-/* ======== HEADER ======== */
-.admin-header {
-  background: #5c7cfa;
+/* SIDEBAR */
+.sidebar {
+  width: 260px;
+  background: linear-gradient(180deg, #658ea8, #4a6b82);
   color: white;
-  padding: 18px 35px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  padding: 20px;
 }
 
-.logo {
-  font-size: 22px;
-  font-weight: 600;
+.perfil {
+  text-align: center;
+  margin-bottom: 30px;
 }
 
-/* MENÚ ORDENADO */
-.top-menu {
-  display: flex;
-  gap: 15px;
-  align-items: center;
+.perfil img {
+  width: 90px;
+  border-radius: 50%;
+  border: 3px solid white;
+  margin-bottom: 10px;
 }
 
-.top-menu button {
-  background: transparent;
+.menu button {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
   border: none;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.15);
   color: white;
-  font-size: 15px;
-  padding: 8px 12px;
   cursor: pointer;
-  font-weight: 500;
 }
 
-.top-menu button:hover {
-  background: rgba(255,255,255,0.2);
-  border-radius: 6px;
+.menu button:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
-.logout-btn {
-  background: #ff4e4e;
-  border: none;
-  color: white;
-  padding: 8px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
+.menu .logout {
+  background: #e76f7b;
 }
 
-/* ======== MAIN ======== */
-main {
-  padding: 30px 40px;
-  flex-grow: 1;
+/* CONTENIDO */
+.contenido {
+  flex: 1;
+  padding: 40px;
+  overflow-y: auto;
 }
 
-/* ======== CARDS ======== */
+.bienvenida h1 {
+  font-size: 2.4rem;
+}
+
 .cards {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 20px;
-  flex-wrap: wrap;
+  margin-top: 30px;
 }
 
 .card {
   background: white;
-  padding: 20px;
-  border-radius: 12px;
-  width: 240px;
-  text-align: center;
-  box-shadow: 0px 3px 8px #cfcfcf;
-}
-
-.curso-card {
-  background: #e7efff;
-}
-
-/* ======== TABLE ======== */
-table {
-  width: 100%;
-  background: white;
-  border-collapse: collapse;
-  box-shadow: 0px 3px 8px #c1c1c1;
-}
-
-table th {
-  background: #5c7cfa;
-  color: white;
-  padding: 12px;
-}
-
-table td {
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
-}
-
-/* ======== BUTTONS ======== */
-.btn-view {
-  background: #5c7cfa;
-  color: white;
-  padding: 6px 10px;
-  border-radius: 6px;
-  border: none;
+  padding: 22px;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   cursor: pointer;
 }
 
-.btn-delete {
-  background: #ff4e4e;
-  color: white;
-  padding: 6px 10px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-}
-
-.btn-edit {
-  background: #ffa645;
-  color: white;
-  padding: 6px 10px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-}
-
-.btn-add {
-  background: #4cd57d;
-  color: white;
-  padding: 12px 16px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
+.volver {
   margin-top: 20px;
-}
-
-.btn-report {
-  background: #6a6cff;
-  color: white;
-  padding: 12px 16px;
-  border-radius: 8px;
+  padding: 10px 18px;
+  border-radius: 20px;
   border: none;
+  background: #658ea8;
+  color: white;
   cursor: pointer;
-  margin: 10px 0;
 }
 
-/* ======== MODAL ======== */
-.modal {
+/* MODAL */
+.modal-fullscreen {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.4);
+  inset: 0;
+  background: #111827;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.modal-content {
+.modal-box {
   background: white;
-  padding: 25px;
   width: 420px;
-  border-radius: 12px;
-  position: relative;
-  box-shadow: 0px 4px 15px #0004;
+  padding: 28px;
+  border-radius: 18px;
 }
 
-.close {
-  position: absolute;
-  right: 15px;
-  top: 10px;
-  cursor: pointer;
-  font-size: 25px;
+.modal-box input,
+.modal-box select {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0 16px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+}
+
+.acciones-modal {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn-primario {
+  background: #da9abf;
+  border: none;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 20px;
+}
+
+.btn-secundario {
+  background: #e5e7eb;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 20px;
 }
